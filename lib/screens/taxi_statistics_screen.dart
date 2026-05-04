@@ -13,7 +13,7 @@ import '../services/taxi_entitlement_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/taxi_shell_bottom_nav.dart';
 
-/// Stitch node: a6a676fce94a43819bd936684625e3f0
+/// Stitch: Min statistik shell (app bar + title row) and content node a6a676fce94a43819bd936684625e3f0
 class TaxiStatisticsScreen extends StatelessWidget {
   const TaxiStatisticsScreen({super.key});
 
@@ -219,66 +219,72 @@ class TaxiStatisticsScreen extends StatelessWidget {
             shape: const Border(
               bottom: BorderSide(color: AppColors.surfaceVariant, width: 1),
             ),
-            titleSpacing: 16,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_rounded,
+                color: AppColors.primary,
+                size: 24,
+              ),
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go('/taxi-dashboard');
+                }
+              },
+            ),
             title: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.menu_rounded,
-                  size: 22,
-                  color: AppColors.onSurfaceVariant,
-                ),
-                const SizedBox(width: 10),
-                Icon(
                   Icons.local_taxi_rounded,
-                  size: 18,
-                  color: AppColors.primaryContainer,
+                  size: 22,
+                  color: AppColors.primary,
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 Text(
                   'TaxiTeori',
                   style: GoogleFonts.publicSans(
-                    fontSize: 34 / 2,
+                    fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.primaryContainer,
+                    letterSpacing: -0.3,
+                    color: AppColors.primary,
                   ),
                 ),
               ],
             ),
-            actions: [
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF2F6DB5), Color(0xFF0A3A66)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: const Icon(
-                  Icons.person_rounded,
-                  size: 18,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+            centerTitle: true,
           ),
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Min Statistik',
-                  style: GoogleFonts.publicSans(
-                    fontSize: 38 / 2,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.onSurface,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.manage_search_rounded,
+                      size: 28,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Min Statistik',
+                        style: GoogleFonts.publicSans(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.4,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 14),
                 if (!loggedIn) ...[
                   const SizedBox(height: 12),
                   InkWell(

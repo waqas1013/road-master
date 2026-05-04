@@ -100,15 +100,26 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
           shape: const Border(
             bottom: BorderSide(color: AppColors.surfaceVariant, width: 1),
           ),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: AppColors.primary,
+              size: 24,
+            ),
+            onPressed: _leaveToSlutprov,
+          ),
           title: Text(
             _resultTitle(session),
             style: GoogleFonts.publicSans(
-              fontSize: 30 / 2,
-              fontWeight: FontWeight.w500,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.2,
               color: AppColors.onSurface,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          centerTitle: true,
+          centerTitle: false,
         ),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -118,11 +129,18 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+                padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
                 decoration: BoxDecoration(
                   color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.surfaceVariant),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
@@ -131,18 +149,29 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          passed
-                              ? Icons.check_circle_outline
-                              : Icons.cancel_outlined,
-                          size: 22,
-                          color: passed ? AppColors.success : AppColors.error,
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: (passed ? AppColors.success : AppColors.error)
+                                .withValues(alpha: 0.12),
+                          ),
+                          child: Icon(
+                            passed
+                                ? Icons.check_rounded
+                                : Icons.close_rounded,
+                            size: 22,
+                            color: passed
+                                ? AppColors.success
+                                : AppColors.error,
+                          ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 10),
                         Text(
                           passed ? 'Godkänt' : 'Ej godkänt',
                           style: GoogleFonts.publicSans(
-                            fontSize: 36 / 2,
+                            fontSize: 18,
                             fontWeight: FontWeight.w600,
                             color: passed ? AppColors.success : AppColors.error,
                           ),
@@ -154,10 +183,10 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
                       outcomeMessage,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
-                        fontSize: 17,
+                        fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        height: 1.4,
-                        color: AppColors.onSurface,
+                        height: 1.45,
+                        color: AppColors.onSurfaceVariant,
                       ),
                     ),
                     if (session.abandonedByUser) ...[
@@ -195,6 +224,8 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
                       icon: Icons.access_time_rounded,
                       value: usedLabel,
                       label: 'Tid använd',
+                      backgroundColor: AppColors.chipBlue,
+                      iconColor: AppColors.chipBlueText,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -203,6 +234,8 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
                       icon: Icons.check_circle_outline_rounded,
                       value: '$correct',
                       label: 'Rätt',
+                      backgroundColor: AppColors.successLight,
+                      iconColor: const Color(0xFF1B5E20),
                     ),
                   ),
                 ],
@@ -215,6 +248,7 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
                       icon: Icons.cancel_outlined,
                       value: '$wrong',
                       label: 'Fel',
+                      backgroundColor: AppColors.errorContainer,
                       iconColor: AppColors.error,
                     ),
                   ),
@@ -224,6 +258,8 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
                       icon: Icons.help_outline_rounded,
                       value: '$skipped',
                       label: 'Hoppade',
+                      backgroundColor: AppColors.warningLight,
+                      iconColor: const Color(0xFFE65100),
                     ),
                   ),
                 ],
@@ -237,17 +273,17 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
                   label: Text(
                     'Granska svar',
                     style: GoogleFonts.publicSans(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: AppColors.onPrimary,
                     ),
                   ),
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primaryContainer,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
@@ -255,23 +291,23 @@ class _TaxiMockExamResultsScreenState extends State<TaxiMockExamResultsScreen> {
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
-                child: FilledButton(
+                child: OutlinedButton(
                   onPressed: _leaveToSlutprov,
-                  style: FilledButton.styleFrom(
+                  style: OutlinedButton.styleFrom(
                     backgroundColor: AppColors.cardBackground,
-                    foregroundColor: AppColors.onSurface,
+                    foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.surfaceVariant),
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: Text(
                     'Tillbaka till Slutprov',
                     style: GoogleFonts.publicSans(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
                     ),
                   ),
                 ),
@@ -303,6 +339,9 @@ class _ScoreRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = total <= 0 ? 0.0 : (correct / total).clamp(0.0, 1.0);
     final ringColor = passed ? AppColors.success : AppColors.error;
+    final trackColor = passed
+        ? AppColors.success.withValues(alpha: 0.2)
+        : const Color(0xFFFFCDD2);
     return SizedBox(
       width: 148,
       height: 148,
@@ -311,7 +350,11 @@ class _ScoreRing extends StatelessWidget {
         children: [
           CustomPaint(
             size: const Size(148, 148),
-            painter: _RingPainter(progress: progress, color: ringColor),
+            painter: _RingPainter(
+              progress: progress,
+              color: ringColor,
+              trackColor: trackColor,
+            ),
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -327,9 +370,9 @@ class _ScoreRing extends StatelessWidget {
               Text(
                 'av $total',
                 style: GoogleFonts.inter(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.onSurface,
+                  color: AppColors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -341,10 +384,15 @@ class _ScoreRing extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-  _RingPainter({required this.progress, required this.color});
+  _RingPainter({
+    required this.progress,
+    required this.color,
+    required this.trackColor,
+  });
 
   final double progress;
   final Color color;
+  final Color trackColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -353,7 +401,7 @@ class _RingPainter extends CustomPainter {
     final radius = (size.width - stroke) / 2;
 
     final bgPaint = Paint()
-      ..color = color.withValues(alpha: 0.18)
+      ..color = trackColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;
@@ -371,7 +419,9 @@ class _RingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _RingPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.color != color;
+    return oldDelegate.progress != progress ||
+        oldDelegate.color != color ||
+        oldDelegate.trackColor != trackColor;
   }
 }
 
@@ -380,12 +430,14 @@ class _StatTile extends StatelessWidget {
     required this.icon,
     required this.value,
     required this.label,
+    required this.backgroundColor,
     this.iconColor = AppColors.onSurfaceVariant,
   });
 
   final IconData icon;
   final String value;
   final String label;
+  final Color backgroundColor;
   final Color iconColor;
 
   @override
@@ -393,9 +445,11 @@ class _StatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.surfaceVariant),
+        border: Border.all(
+          color: AppColors.surfaceVariant.withValues(alpha: 0.6),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
