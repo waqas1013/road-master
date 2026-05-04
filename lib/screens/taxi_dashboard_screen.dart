@@ -12,7 +12,7 @@ import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/taxi_shell_bottom_nav.dart';
 
-/// Stitch **Taxi Dashboard — Updated Nav & Switcher** (driver portal home).
+/// Stitch **Taxi Dashboard — Hem** ([design](https://stitch.withgoogle.com/projects/12151423533525555918?node-id=3360ae7c248249269ae0659c37508139)).
 class TaxiDashboardScreen extends StatefulWidget {
   const TaxiDashboardScreen({super.key});
 
@@ -29,16 +29,28 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
     _onProgressChanged = () {
       if (mounted) setState(() {});
     };
-    SakerhetPracticeRepository.instance.progressRevision.addListener(_onProgressChanged);
-    LagarPracticeRepository.instance.progressRevision.addListener(_onProgressChanged);
-    KartaPracticeRepository.instance.progressRevision.addListener(_onProgressChanged);
+    SakerhetPracticeRepository.instance.progressRevision.addListener(
+      _onProgressChanged,
+    );
+    LagarPracticeRepository.instance.progressRevision.addListener(
+      _onProgressChanged,
+    );
+    KartaPracticeRepository.instance.progressRevision.addListener(
+      _onProgressChanged,
+    );
   }
 
   @override
   void dispose() {
-    SakerhetPracticeRepository.instance.progressRevision.removeListener(_onProgressChanged);
-    LagarPracticeRepository.instance.progressRevision.removeListener(_onProgressChanged);
-    KartaPracticeRepository.instance.progressRevision.removeListener(_onProgressChanged);
+    SakerhetPracticeRepository.instance.progressRevision.removeListener(
+      _onProgressChanged,
+    );
+    LagarPracticeRepository.instance.progressRevision.removeListener(
+      _onProgressChanged,
+    );
+    KartaPracticeRepository.instance.progressRevision.removeListener(
+      _onProgressChanged,
+    );
     super.dispose();
   }
 
@@ -78,13 +90,19 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
   /// Overall “taximodul” — mean of study categories (vägmärken included as 0 until content exists).
   int _overallPercent() {
     const vagmarken = 0.0;
-    final p = (_sakerhetProgress() + _kartaProgress() + _lagarProgress() + vagmarken) / 4;
+    final p =
+        (_sakerhetProgress() +
+            _kartaProgress() +
+            _lagarProgress() +
+            vagmarken) /
+        4;
     return ((p * 100).round()).clamp(0, 100);
   }
 
   @override
   Widget build(BuildContext context) {
-    final loggedIn = TaxiEntitlementService.instance.canViewPersonalTaxiProgress;
+    final loggedIn =
+        TaxiEntitlementService.instance.canViewPersonalTaxiProgress;
     final sakerhetP = loggedIn ? _sakerhetProgress() : 0.0;
     final kartaP = loggedIn ? _kartaProgress() : 0.0;
     final lagarP = loggedIn ? _lagarProgress() : 0.0;
@@ -95,7 +113,7 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
       backgroundColor: AppColors.background,
       drawer: const AppDrawer(),
       appBar: AppBar(
-        // Stitch `node-id=6f008d1c0dd64dd7be398efc70471f99`: [menu] + taxi + Förarportal | switcher
+        // Stitch Hem header: menu + brand + B/Taxi switcher
         automaticallyImplyLeading: false,
         leading: const SizedBox.shrink(),
         leadingWidth: 0,
@@ -125,7 +143,11 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
                 icon: const Icon(Icons.menu_rounded),
               ),
               const SizedBox(width: 4),
-              Icon(Icons.local_taxi_rounded, size: 26, color: AppColors.primaryContainer),
+              Icon(
+                Icons.local_taxi_rounded,
+                size: 26,
+                color: AppColors.primaryContainer,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Förarportal',
@@ -187,7 +209,10 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
                       padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
-                          Icon(Icons.login_rounded, color: AppColors.primaryContainer),
+                          Icon(
+                            Icons.login_rounded,
+                            color: AppColors.primaryContainer,
+                          ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -199,7 +224,10 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
                               ),
                             ),
                           ),
-                          Icon(Icons.chevron_right_rounded, color: AppColors.onSurfaceVariant),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: AppColors.onSurfaceVariant,
+                          ),
                         ],
                       ),
                     ),
@@ -208,6 +236,8 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
               ],
               const SizedBox(height: 32),
               _ProgressCard(overallPercent: overall),
+              const SizedBox(height: 12),
+              _DailyGoalHint(overallPercent: overall),
               const SizedBox(height: 32),
               Text(
                 'Studiekategorier',
@@ -231,36 +261,28 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
                     title: 'Säkerhet & Beteende',
                     progress: sakerhetP,
                     icon: Icons.security_rounded,
-                    iconBackground: AppColors.primaryLight,
-                    iconColor: AppColors.onPrimaryFixed,
-                    barColor: AppColors.primaryContainer,
+                    bento: TaxiHemBentoStyle.sakerhet,
                     onTap: () => context.push('/taxi-sakerhet'),
                   ),
                   _CategoryTile(
                     title: 'Karta & Ruttplanering',
                     progress: kartaP,
                     icon: Icons.map_rounded,
-                    iconBackground: AppColors.secondaryFixed,
-                    iconColor: AppColors.onSecondaryFixed,
-                    barColor: AppColors.secondary,
+                    bento: TaxiHemBentoStyle.karta,
                     onTap: () => context.push('/taxi-karta'),
                   ),
                   _CategoryTile(
                     title: 'Lagstiftning',
                     progress: lagarP,
                     icon: Icons.gavel_rounded,
-                    iconBackground: AppColors.surfaceContainerHighest,
-                    iconColor: AppColors.onSurfaceVariant,
-                    barColor: AppColors.outline,
+                    bento: TaxiHemBentoStyle.lagstiftning,
                     onTap: () => context.push('/taxi-lagstiftning'),
                   ),
                   _CategoryTile(
                     title: 'Vägmärken',
                     progress: vagmarkenP,
                     icon: Icons.traffic_rounded,
-                    iconBackground: AppColors.surfaceContainerHighest,
-                    iconColor: AppColors.onSurfaceVariant,
-                    barColor: AppColors.surfaceVariant,
+                    bento: TaxiHemBentoStyle.vagmarken,
                     onTap: () {},
                   ),
                 ],
@@ -271,7 +293,9 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const TaxiShellBottomNav(selectedRoute: '/taxi-dashboard'),
+      bottomNavigationBar: const TaxiShellBottomNav(
+        selectedRoute: '/taxi-dashboard',
+      ),
     );
   }
 }
@@ -371,9 +395,9 @@ class _ProgressCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: AppColors.secondaryFixed,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.surfaceVariant),
+        border: Border.all(color: AppColors.secondaryContainer),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -398,7 +422,7 @@ class _ProgressCard extends StatelessWidget {
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         height: 28 / 20,
-                        color: AppColors.onSurface,
+                        color: AppColors.onSecondaryFixed,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -408,7 +432,7 @@ class _ProgressCard extends StatelessWidget {
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         height: 20 / 14,
-                        color: AppColors.onSurfaceVariant,
+                        color: AppColors.onSecondaryFixed,
                       ),
                     ),
                   ],
@@ -421,7 +445,7 @@ class _ProgressCard extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   height: 32 / 24,
                   letterSpacing: -0.01 * 24,
-                  color: AppColors.primary,
+                  color: AppColors.onSecondaryFixed,
                 ),
               ),
             ],
@@ -432,8 +456,52 @@ class _ProgressCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: overallPercent / 100,
               minHeight: 10,
-              backgroundColor: AppColors.surfaceContainerHighest,
-              color: AppColors.primaryContainer,
+              backgroundColor: AppColors.cardBackground.withValues(alpha: 0.7),
+              color: AppColors.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DailyGoalHint extends StatelessWidget {
+  const _DailyGoalHint({required this.overallPercent});
+
+  final int overallPercent;
+
+  @override
+  Widget build(BuildContext context) {
+    final toNext = ((overallPercent / 10).floor() + 1) * 10;
+    final nextGoal = toNext > 100 ? 100 : toNext;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.surfaceVariant),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.flag_rounded,
+            size: 18,
+            color: AppColors.primaryContainer,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              overallPercent >= 100
+                  ? 'Mål uppnått! Du har slutfört hela taximodulen.'
+                  : 'Nästa delmål: $nextGoal% totalt. Fortsätt med en kategori idag.',
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                height: 18 / 13,
+                color: AppColors.onSurfaceVariant,
+              ),
             ),
           ),
         ],
@@ -447,18 +515,14 @@ class _CategoryTile extends StatelessWidget {
     required this.title,
     required this.progress,
     required this.icon,
-    required this.iconBackground,
-    required this.iconColor,
-    required this.barColor,
+    required this.bento,
     required this.onTap,
   });
 
   final String title;
   final double progress;
   final IconData icon;
-  final Color iconBackground;
-  final Color iconColor;
-  final Color barColor;
+  final TaxiHemBentoStyle bento;
   final VoidCallback onTap;
 
   @override
@@ -473,9 +537,9 @@ class _CategoryTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.cardBackground,
+            color: bento.cardBackground,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.surfaceVariant),
+            border: Border.all(color: bento.border),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.02),
@@ -494,10 +558,10 @@ class _CategoryTile extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: iconBackground,
+                      color: bento.iconBackground,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(icon, color: iconColor, size: 22),
+                    child: Icon(icon, color: bento.iconForeground, size: 22),
                   ),
                   const Spacer(),
                   Text(
@@ -506,7 +570,7 @@ class _CategoryTile extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       height: 16 / 12,
-                      color: AppColors.secondary,
+                      color: bento.percentText,
                     ),
                   ),
                 ],
@@ -530,8 +594,8 @@ class _CategoryTile extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progress.clamp(0.0, 1.0),
                   minHeight: 4,
-                  backgroundColor: AppColors.surfaceContainerHighest,
-                  color: barColor,
+                  backgroundColor: bento.trackBackground,
+                  color: bento.progressColor,
                 ),
               ),
             ],
@@ -593,7 +657,9 @@ class _SlutprovCta extends StatelessWidget {
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
               elevation: 0,
             ),
             child: Row(

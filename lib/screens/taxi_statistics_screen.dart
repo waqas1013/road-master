@@ -13,49 +13,54 @@ import '../services/taxi_entitlement_service.dart';
 import '../theme/app_colors.dart';
 import '../widgets/taxi_shell_bottom_nav.dart';
 
-/// Stitch **Statistics & Progress - Updated Nav** — Min statistik.
+/// Stitch node: a6a676fce94a43819bd936684625e3f0
 class TaxiStatisticsScreen extends StatelessWidget {
   const TaxiStatisticsScreen({super.key});
 
   static String _svDate(DateTime d) {
-    const m = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
+    const m = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Maj',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Dec',
+    ];
     return '${d.day} ${m[d.month - 1]} ${d.year}';
   }
 
-  static double _sakerhetCompletion() {
+  static double _completionFor({
+    required int setCount,
+    required int Function(int set) setSize,
+    required Object? Function(int set) load,
+  }) {
     var totalQ = 0;
     var answered = 0;
-    for (var i = 1; i <= kSakerhetPracticeSetCount; i++) {
-      totalQ += sakerhetPracticeSetSize(i);
-      final p = SakerhetPracticeRepository.instance.load(i);
-      if (p != null) answered += p.totalAnswered;
+    for (var i = 1; i <= setCount; i++) {
+      totalQ += setSize(i);
+      final p = load(i);
+      if (p == null) continue;
+      answered += _answersMap(p).length;
     }
     return totalQ > 0 ? answered / totalQ : 0;
   }
 
-  static double _lagarCompletion() {
-    var totalQ = 0;
-    var answered = 0;
-    for (var i = 1; i <= kLagstiftningPracticeSetCount; i++) {
-      totalQ += lagstiftningPracticeSetSize(i);
-      final p = LagarPracticeRepository.instance.load(i);
-      if (p != null) answered += p.totalAnswered;
+  static Map<String, int> _answersMap(dynamic prog) {
+    if (prog == null) return {};
+    try {
+      final a = prog.answers as Map<String, int>?;
+      return a ?? {};
+    } catch (_) {
+      return {};
     }
-    return totalQ > 0 ? answered / totalQ : 0;
   }
 
-  static double _kartaCompletion() {
-    var totalQ = 0;
-    var answered = 0;
-    for (var i = 1; i <= kKartaPracticeSetCount; i++) {
-      totalQ += kartaPracticeSetSize(i);
-      final p = KartaPracticeRepository.instance.load(i);
-      if (p != null) answered += p.totalAnswered;
-    }
-    return totalQ > 0 ? answered / totalQ : 0;
-  }
-
-  /// Rätt / svarade över alla set i modulen.
   static double _moduleAccuracy({
     required int setCount,
     required List<TaxiPracticeQuestion> Function(int set) questionsForSet,
@@ -79,65 +84,6 @@ class TaxiStatisticsScreen extends StatelessWidget {
     }
     if (answered == 0) return 0;
     return correct / answered;
-  }
-
-  static Map<String, int> _answersMap(dynamic prog) {
-    if (prog == null) return {};
-    try {
-      final a = prog.answers as Map<String, int>?;
-      return a ?? {};
-    } catch (_) {
-      return {};
-    }
-  }
-
-  static double _sakerhetAccuracy() => _moduleAccuracy(
-        setCount: kSakerhetPracticeSetCount,
-        questionsForSet: sakerhetPracticeQuestions,
-        load: (s) => SakerhetPracticeRepository.instance.load(s),
-      );
-
-  static double _lagarAccuracy() => _moduleAccuracy(
-        setCount: kLagstiftningPracticeSetCount,
-        questionsForSet: lagstiftningPracticeQuestions,
-        load: (s) => LagarPracticeRepository.instance.load(s),
-      );
-
-  static double _kartaAccuracy() => _moduleAccuracy(
-        setCount: kKartaPracticeSetCount,
-        questionsForSet: kartaPracticeQuestions,
-        load: (s) => KartaPracticeRepository.instance.load(s),
-      );
-
-  /// Senaste: senaste slutprov för delprov om finns, annars set med flest svarade.
-  static double _senasteSakerhet(List<MockExamHistoryEntry> history) {
-    for (final e in history) {
-      if (e.part == 1) return e.scorePercent / 100;
-    }
-    return _focusedSetAccuracy(
-      setCount: kSakerhetPracticeSetCount,
-      questionsForSet: sakerhetPracticeQuestions,
-      load: (s) => SakerhetPracticeRepository.instance.load(s),
-    );
-  }
-
-  static double _senasteLagar(List<MockExamHistoryEntry> history) {
-    for (final e in history) {
-      if (e.part == 2) return e.scorePercent / 100;
-    }
-    return _focusedSetAccuracy(
-      setCount: kLagstiftningPracticeSetCount,
-      questionsForSet: lagstiftningPracticeQuestions,
-      load: (s) => LagarPracticeRepository.instance.load(s),
-    );
-  }
-
-  static double _senasteKarta() {
-    return _focusedSetAccuracy(
-      setCount: kKartaPracticeSetCount,
-      questionsForSet: kartaPracticeQuestions,
-      load: (s) => KartaPracticeRepository.instance.load(s),
-    );
   }
 
   static double _focusedSetAccuracy({
@@ -166,23 +112,102 @@ class TaxiStatisticsScreen extends StatelessWidget {
     return acc;
   }
 
+  static double _latestSakerhet(List<MockExamHistoryEntry> history) {
+    for (final e in history) {
+      if (e.part == 1) return e.scorePercent / 100;
+    }
+    return _focusedSetAccuracy(
+      setCount: kSakerhetPracticeSetCount,
+      questionsForSet: sakerhetPracticeQuestions,
+      load: (s) => SakerhetPracticeRepository.instance.load(s),
+    );
+  }
+
+  static double _latestLagar(List<MockExamHistoryEntry> history) {
+    for (final e in history) {
+      if (e.part == 2) return e.scorePercent / 100;
+    }
+    return _focusedSetAccuracy(
+      setCount: kLagstiftningPracticeSetCount,
+      questionsForSet: lagstiftningPracticeQuestions,
+      load: (s) => LagarPracticeRepository.instance.load(s),
+    );
+  }
+
+  static double _latestKarta() {
+    return _focusedSetAccuracy(
+      setCount: kKartaPracticeSetCount,
+      questionsForSet: kartaPracticeQuestions,
+      load: (s) => KartaPracticeRepository.instance.load(s),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<MockExamHistoryEntry>>(
       future: MockExamHistory.load(),
       builder: (context, snap) {
-        final loggedIn = TaxiEntitlementService.instance.canViewPersonalTaxiProgress;
+        final loggedIn =
+            TaxiEntitlementService.instance.canViewPersonalTaxiProgress;
         final history = loggedIn ? (snap.data ?? []) : <MockExamHistoryEntry>[];
-        final overallPct = loggedIn
-            ? ((_sakerhetCompletion() + _kartaCompletion() + _lagarCompletion()) / 3 * 100).round()
-            : 0;
 
-        final sAcc = loggedIn ? _sakerhetAccuracy() : 0.0;
-        final kAcc = loggedIn ? _kartaAccuracy() : 0.0;
-        final lAcc = loggedIn ? _lagarAccuracy() : 0.0;
-        final sSen = loggedIn ? _senasteSakerhet(history) : 0.0;
-        final kSen = loggedIn ? _senasteKarta() : 0.0;
-        final lSen = loggedIn ? _senasteLagar(history) : 0.0;
+        final sComp = loggedIn
+            ? _completionFor(
+                setCount: kSakerhetPracticeSetCount,
+                setSize: sakerhetPracticeSetSize,
+                load: (s) => SakerhetPracticeRepository.instance.load(s),
+              )
+            : 0.0;
+        final kComp = loggedIn
+            ? _completionFor(
+                setCount: kKartaPracticeSetCount,
+                setSize: kartaPracticeSetSize,
+                load: (s) => KartaPracticeRepository.instance.load(s),
+              )
+            : 0.0;
+        final lComp = loggedIn
+            ? _completionFor(
+                setCount: kLagstiftningPracticeSetCount,
+                setSize: lagstiftningPracticeSetSize,
+                load: (s) => LagarPracticeRepository.instance.load(s),
+              )
+            : 0.0;
+        const vComp = 0.0;
+
+        final overall = ((sComp + kComp + lComp + vComp) / 4 * 100).round();
+        final sMain =
+            (loggedIn
+                ? _moduleAccuracy(
+                    setCount: kSakerhetPracticeSetCount,
+                    questionsForSet: sakerhetPracticeQuestions,
+                    load: (s) => SakerhetPracticeRepository.instance.load(s),
+                  )
+                : 0.0) *
+            100;
+        final kMain =
+            (loggedIn
+                ? _moduleAccuracy(
+                    setCount: kKartaPracticeSetCount,
+                    questionsForSet: kartaPracticeQuestions,
+                    load: (s) => KartaPracticeRepository.instance.load(s),
+                  )
+                : 0.0) *
+            100;
+        final lMain =
+            (loggedIn
+                ? _moduleAccuracy(
+                    setCount: kLagstiftningPracticeSetCount,
+                    questionsForSet: lagstiftningPracticeQuestions,
+                    load: (s) => LagarPracticeRepository.instance.load(s),
+                  )
+                : 0.0) *
+            100;
+        final vMain = 0.0;
+
+        final sLatest = (_latestSakerhet(history) * 100).round();
+        final kLatest = (_latestKarta() * 100).round();
+        final lLatest = (_latestLagar(history) * 100).round();
+        const vLatest = 0;
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -190,286 +215,290 @@ class TaxiStatisticsScreen extends StatelessWidget {
             backgroundColor: AppColors.cardBackground,
             surfaceTintColor: Colors.transparent,
             elevation: 0,
+            toolbarHeight: 64,
             shape: const Border(
               bottom: BorderSide(color: AppColors.surfaceVariant, width: 1),
             ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.primaryContainer),
-              onPressed: () {
-                if (context.canPop()) {
-                  context.pop();
-                } else {
-                  context.go('/taxi-dashboard');
-                }
-              },
+            titleSpacing: 16,
+            title: Row(
+              children: [
+                Icon(
+                  Icons.menu_rounded,
+                  size: 22,
+                  color: AppColors.onSurfaceVariant,
+                ),
+                const SizedBox(width: 10),
+                Icon(
+                  Icons.local_taxi_rounded,
+                  size: 18,
+                  color: AppColors.primaryContainer,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'TaxiTeori',
+                  style: GoogleFonts.publicSans(
+                    fontSize: 34 / 2,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryContainer,
+                  ),
+                ),
+              ],
             ),
-            title: Text(
-              'Min Statistik - TaxiTeori',
-              style: GoogleFonts.publicSans(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primaryContainer,
+            actions: [
+              Container(
+                margin: const EdgeInsets.only(right: 16),
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF2F6DB5), Color(0xFF0A3A66)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.person_rounded,
+                  size: 18,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            centerTitle: true,
+            ],
           ),
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.query_stats_rounded, size: 28, color: AppColors.primaryContainer),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Min Statistik',
-                        style: GoogleFonts.publicSans(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          height: 32 / 24,
-                          color: AppColors.onSurface,
-                        ),
-                      ),
-                    ),
-                  ],
+                Text(
+                  'Min Statistik',
+                  style: GoogleFonts.publicSans(
+                    fontSize: 38 / 2,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.onSurface,
+                  ),
                 ),
-                const SizedBox(height: 20),
-                if (!loggedIn)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Material(
-                      color: AppColors.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(12),
-                      child: InkWell(
-                        onTap: () => context.push('/login'),
+                if (!loggedIn) ...[
+                  const SizedBox(height: 12),
+                  InkWell(
+                    onTap: () => context.push('/login'),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(12),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Icon(Icons.login_rounded, color: AppColors.primaryContainer),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  'Logga in för att se din sparade statistik och resultat från den här enheten.',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 14,
-                                    height: 20 / 14,
-                                    color: AppColors.onSurface,
-                                  ),
-                                ),
-                              ),
-                              Icon(Icons.chevron_right_rounded, color: AppColors.onSurfaceVariant),
-                            ],
-                          ),
+                        border: Border.all(color: AppColors.surfaceVariant),
+                      ),
+                      child: Text(
+                        'Logga in för att se din personliga statistik.',
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: AppColors.onSurfaceVariant,
                         ),
                       ),
                     ),
                   ),
-                Center(
-                  child: SizedBox(
-                    width: 140,
-                    height: 140,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          width: 140,
-                          height: 140,
-                          child: CircularProgressIndicator(
-                            value: (overallPct / 100).clamp(0.0, 1.0),
-                            strokeWidth: 10,
-                            backgroundColor: AppColors.surfaceContainerHigh,
-                            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-                            strokeCap: StrokeCap.round,
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '$overallPct%',
-                              style: GoogleFonts.publicSans(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                            Text(
-                              'Klar',
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                color: AppColors.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 28),
+                ],
+                const SizedBox(height: 12),
+                _OverallCard(overallPercent: overall),
+                const SizedBox(height: 18),
                 Text(
-                  'Övergripande framsteg',
+                  'Studiekategorier',
                   style: GoogleFonts.publicSans(
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.onSurface,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Du är på god väg mot din taxilegitimation. Fortsätt öva på de områden där du behöver mer träning för att nå 100%.',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    height: 20 / 14,
-                    color: AppColors.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Text(
-                  'Kategoriuppdelning',
-                  style: GoogleFonts.publicSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _CategoryCard(
-                  icon: Icons.security_rounded,
-                  title: 'Säkerhet & beteende',
-                  mainPct: (sAcc * 100).round(),
-                  senastePct: (sSen * 100).round(),
-                ),
-                const SizedBox(height: 12),
-                _CategoryCard(
-                  icon: Icons.map_rounded,
-                  title: 'Karta & Ruttplanering',
-                  mainPct: (kAcc * 100).round(),
-                  senastePct: (kSen * 100).round(),
-                ),
-                const SizedBox(height: 12),
-                _CategoryCard(
-                  icon: Icons.gavel_rounded,
-                  title: 'Lagstiftning',
-                  mainPct: (lAcc * 100).round(),
-                  senastePct: (lSen * 100).round(),
-                ),
-                const SizedBox(height: 28),
-                Row(
+                const SizedBox(height: 10),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.92,
                   children: [
-                    const Icon(Icons.trending_up_rounded, color: AppColors.primary, size: 22),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Styrkor',
-                      style: GoogleFonts.publicSans(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.onSurface,
-                      ),
+                    _CategoryTile(
+                      title: 'Säkerhet &\nBeteende',
+                      icon: Icons.security_rounded,
+                      iconColor: const Color(0xFF2F6DB5),
+                      iconBg: const Color(0xFFE4EEFF),
+                      pct: sMain.round(),
+                      latest: sLatest,
+                      barColor: const Color(0xFF4E6DFF),
+                    ),
+                    _CategoryTile(
+                      title: 'Karta &\nRuttplanering',
+                      icon: Icons.map_rounded,
+                      iconColor: const Color(0xFF2B8A3E),
+                      iconBg: const Color(0xFFE2F6E8),
+                      pct: kMain.round(),
+                      latest: kLatest,
+                      barColor: const Color(0xFF46B26D),
+                    ),
+                    _CategoryTile(
+                      title: 'Lagstiftning',
+                      icon: Icons.gavel_rounded,
+                      iconColor: const Color(0xFF8A42C8),
+                      iconBg: const Color(0xFFF0E4FF),
+                      pct: lMain.round(),
+                      latest: lLatest,
+                      barColor: const Color(0xFF8A42C8),
+                    ),
+                    _CategoryTile(
+                      title: 'Vägmärken',
+                      icon: Icons.traffic_rounded,
+                      iconColor: const Color(0xFFC26A1A),
+                      iconBg: const Color(0xFFFFF1DD),
+                      pct: vMain.round(),
+                      latest: vLatest,
+                      barColor: const Color(0xFFD48A2A),
+                      notStarted: true,
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                const _Bullet(icon: Icons.check_circle_rounded, iconColor: AppColors.success, text: 'Väjningsregler'),
-                const _Bullet(icon: Icons.check_circle_rounded, iconColor: AppColors.success, text: 'Passagerarsäkerhet'),
-                const _Bullet(icon: Icons.check_circle_rounded, iconColor: AppColors.success, text: 'Skyltavläsning'),
-                const SizedBox(height: 28),
-                Row(
-                  children: [
-                    const Icon(Icons.trending_down_rounded, color: AppColors.error, size: 22),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Kräver övning',
-                      style: GoogleFonts.publicSans(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const _Bullet(icon: Icons.cancel_rounded, iconColor: AppColors.error, text: 'GPS-navigering utan mottagning'),
-                const _Bullet(icon: Icons.cancel_rounded, iconColor: AppColors.error, text: 'Specifika lokala lagar'),
-                const _Bullet(icon: Icons.cancel_rounded, iconColor: AppColors.error, text: 'Arbetstidsregler'),
-                const SizedBox(height: 28),
+                const SizedBox(height: 18),
                 Text(
                   'Senaste Slutprov',
                   style: GoogleFonts.publicSans(
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.onSurface,
                   ),
                 ),
-                const SizedBox(height: 12),
-                if (history.isEmpty)
-                  Text(
-                    'Inga avslutade slutprov ännu. Gör ett slutprov för att se historik här.',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      height: 20 / 14,
-                      color: AppColors.onSurfaceVariant,
-                    ),
-                  )
-                else
-                  ...List.generate(history.length, (i) {
-                    final e = history[i];
-                    final n = history.length - i;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: _SlutprovHistoryTile(
-                        dateLabel: _svDate(e.completedAt),
-                        title: 'Slutprov #$n',
-                        percent: e.scorePercent,
-                        passed: e.passed,
-                      ),
-                    );
-                  }),
+                const SizedBox(height: 10),
+                _HistoryCard(history: history),
               ],
             ),
           ),
-          bottomNavigationBar: const TaxiShellBottomNav(selectedRoute: '/taxi-statistik'),
+          bottomNavigationBar: const TaxiShellBottomNav(
+            selectedRoute: '/taxi-statistik',
+          ),
         );
       },
     );
   }
 }
 
-class _CategoryCard extends StatelessWidget {
-  const _CategoryCard({
-    required this.icon,
-    required this.title,
-    required this.mainPct,
-    required this.senastePct,
-  });
+class _OverallCard extends StatelessWidget {
+  const _OverallCard({required this.overallPercent});
 
-  final IconData icon;
-  final String title;
-  final int mainPct;
-  final int senastePct;
+  final int overallPercent;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.surfaceVariant),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            width: 132,
+            height: 132,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 132,
+                  height: 132,
+                  child: CircularProgressIndicator(
+                    value: (overallPercent / 100).clamp(0.0, 1.0),
+                    strokeWidth: 10,
+                    backgroundColor: AppColors.surfaceContainerHigh,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppColors.primaryContainer,
+                    ),
+                    strokeCap: StrokeCap.round,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '$overallPercent%',
+                      style: GoogleFonts.publicSans(
+                        fontSize: 40 / 2,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primaryContainer,
+                      ),
+                    ),
+                    Text(
+                      'TOTALT',
+                      style: GoogleFonts.publicSans(
+                        fontSize: 14 / 2,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                        color: AppColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'Övergripande framsteg',
+            style: GoogleFonts.publicSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: AppColors.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Du är på god väg mot din taxilegitimation. Fortsätt öva på de områden där du behöver mer träning för att nå 100%.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              height: 1.35,
+              color: AppColors.onSurfaceVariant,
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CategoryTile extends StatelessWidget {
+  const _CategoryTile({
+    required this.title,
+    required this.icon,
+    required this.iconColor,
+    required this.iconBg,
+    required this.pct,
+    required this.latest,
+    required this.barColor,
+    this.notStarted = false,
+  });
+
+  final String title;
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBg;
+  final int pct;
+  final int latest;
+  final Color barColor;
+  final bool notStarted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.surfaceVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -477,56 +506,51 @@ class _CategoryCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 34,
+                height: 34,
                 decoration: BoxDecoration(
-                  color: AppColors.secondaryContainer,
-                  borderRadius: BorderRadius.circular(10),
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: AppColors.primary, size: 22),
+                child: Icon(icon, size: 18, color: iconColor),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: GoogleFonts.publicSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.onSurface,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+              const Spacer(),
               Text(
-                '$mainPct%',
+                '$pct%',
                 style: GoogleFonts.publicSans(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primaryContainer,
-                ),
-              ),
-              Text(
-                'Senaste: $senastePct%',
-                style: GoogleFonts.inter(
-                  fontSize: 13,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.onSurfaceVariant,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
+          Text(
+            title,
+            style: GoogleFonts.publicSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+              color: AppColors.onSurface,
+            ),
+          ),
+          const Spacer(),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
-              value: (mainPct / 100).clamp(0.0, 1.0),
-              minHeight: 6,
+              value: (pct / 100).clamp(0.0, 1.0),
+              minHeight: 4,
               backgroundColor: AppColors.surfaceContainerHigh,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(barColor),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            notStarted ? 'Ej påbörjat' : 'Senaste: $latest%',
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: AppColors.onSurfaceVariant,
             ),
           ),
         ],
@@ -535,94 +559,112 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-class _Bullet extends StatelessWidget {
-  const _Bullet({
-    required this.icon,
-    required this.iconColor,
-    required this.text,
-  });
+class _HistoryCard extends StatelessWidget {
+  const _HistoryCard({required this.history});
 
-  final IconData icon;
-  final Color iconColor;
-  final String text;
+  final List<MockExamHistoryEntry> history;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 20, color: iconColor),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                height: 20 / 14,
-                color: AppColors.onSurface,
-              ),
-            ),
+    if (history.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.surfaceVariant),
+        ),
+        child: Text(
+          'Inga avslutade slutprov ännu.',
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: AppColors.onSurfaceVariant,
           ),
-        ],
-      ),
-    );
-  }
-}
+        ),
+      );
+    }
 
-class _SlutprovHistoryTile extends StatelessWidget {
-  const _SlutprovHistoryTile({
-    required this.dateLabel,
-    required this.title,
-    required this.percent,
-    required this.passed,
-  });
-
-  final String dateLabel;
-  final String title;
-  final int percent;
-  final bool passed;
-
-  @override
-  Widget build(BuildContext context) {
+    final top = history.take(3).toList();
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.surfaceVariant),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            dateLabel,
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              color: AppColors.onSurfaceVariant,
+        children: List.generate(top.length, (i) {
+          final e = top[i];
+          final n = history.length - i;
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+            child: Row(
+              children: [
+                Container(
+                  width: 26,
+                  height: 26,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: (e.passed ? AppColors.success : AppColors.error)
+                        .withValues(alpha: 0.12),
+                  ),
+                  child: Icon(
+                    e.passed ? Icons.check_rounded : Icons.close_rounded,
+                    size: 16,
+                    color: e.passed ? AppColors.success : AppColors.error,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        TaxiStatisticsScreen._svDate(e.completedAt),
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.onSurface,
+                        ),
+                      ),
+                      Text(
+                        'Slutprov #$n',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: AppColors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${e.scorePercent}%',
+                      style: GoogleFonts.publicSans(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.onSurface,
+                      ),
+                    ),
+                    Text(
+                      e.passed ? 'GODKÄND' : 'UNDERKÄND',
+                      style: GoogleFonts.publicSans(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.6,
+                        color: e.passed ? AppColors.success : AppColors.error,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            title,
-            style: GoogleFonts.publicSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: AppColors.onSurface,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '$percent% ${passed ? 'Godkänd' : 'Underkänd'}',
-            style: GoogleFonts.publicSans(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: passed ? AppColors.success : AppColors.error,
-            ),
-          ),
-        ],
+          );
+        }),
       ),
     );
   }

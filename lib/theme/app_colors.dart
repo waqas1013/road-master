@@ -69,3 +69,64 @@ class AppColors {
   static const Color progressYellow = Color(0xFFFFC107);
   static const Color progressBlue = Color(0xFF2196F3);
 }
+
+/// Studiekategorier bento on taxi Hem — Stitch `3360ae7c248249269ae0659c37508139` (blue / green / purple / orange).
+class TaxiHemBentoStyle {
+  const TaxiHemBentoStyle({
+    required this.cardBackground,
+    required this.border,
+    required this.iconBackground,
+    required this.iconForeground,
+    required this.percentText,
+    required this.trackBackground,
+    required this.progressColor,
+  });
+
+  final Color cardBackground;
+  final Color border;
+  final Color iconBackground;
+  final Color iconForeground;
+  final Color percentText;
+  final Color trackBackground;
+  final Color progressColor;
+
+  static const sakerhet = TaxiHemBentoStyle(
+    cardBackground: Color(0xFFF5FAFE),
+    border: Color(0xFFDBEAFE),
+    iconBackground: Color(0xFFDBEAFE),
+    iconForeground: Color(0xFF1D4ED8),
+    percentText: Color(0xFF1E40AF),
+    trackBackground: Color(0x80DBEAFE),
+    progressColor: Color(0xFF2563EB),
+  );
+
+  static const karta = TaxiHemBentoStyle(
+    cardBackground: Color(0xFFF4FCF7),
+    border: Color(0xFFDCFCE7),
+    iconBackground: Color(0xFFDCFCE7),
+    iconForeground: Color(0xFF15803D),
+    percentText: Color(0xFF166534),
+    trackBackground: Color(0x80DCFCE7),
+    progressColor: Color(0xFF16A34A),
+  );
+
+  static const lagstiftning = TaxiHemBentoStyle(
+    cardBackground: Color(0xFFF9F5FF),
+    border: Color(0xFFF3E8FF),
+    iconBackground: Color(0xFFF3E8FF),
+    iconForeground: Color(0xFF7E22CE),
+    percentText: Color(0xFF6B21A8),
+    trackBackground: Color(0x80F3E8FF),
+    progressColor: Color(0xFF9333EA),
+  );
+
+  static const vagmarken = TaxiHemBentoStyle(
+    cardBackground: Color(0xFFFFFBF5),
+    border: Color(0xFFFFEDD5),
+    iconBackground: Color(0xFFFFEDD5),
+    iconForeground: Color(0xFFC2410C),
+    percentText: Color(0xFF9A3412),
+    trackBackground: Color(0x80FFEDD5),
+    progressColor: Color(0xFFEA580C),
+  );
+}

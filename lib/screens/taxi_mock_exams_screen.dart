@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/app_colors.dart';
 import '../services/taxi_entitlement_service.dart';
+import '../theme/app_colors.dart';
 import '../widgets/taxi_shell_bottom_nav.dart';
 
 Future<void> tryStartTaxiSlutprov(BuildContext context, int part) async {
   final svc = TaxiEntitlementService.instance;
   if (!svc.isLoggedIn) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Logga in för att starta slutprov.')),
-    );
     await context.push('/login');
     return;
   }
@@ -29,15 +26,16 @@ Future<void> tryStartTaxiSlutprov(BuildContext context, int part) async {
   await context.push('/taxi-mock-exam?part=$part');
 }
 
-/// Stitch screen: **Mock Exams - Dynamic Question Bank Info**.
+/// Stitch node: 67289e7bf089418095478a91e53cf243
 class TaxiMockExamsScreen extends StatelessWidget {
   const TaxiMockExamsScreen({super.key});
 
   static const _introBody =
-      'Dessa övningsprov simulerar det officiella kunskapsprovet för taxiförarlegitimation (TFL) hos Trafikverket. Du måste vara godkänd på båda delproven för att få utföra taxitrafik.';
+      'Simulera det riktiga provet hos Trafikverket.\nDu måste klara båda delproven för att få ditt taxiförarlegitimation.';
 
-  static const _infoBoxBody =
-      'Prov genereras dynamiskt från en stor frågebank med nya frågor varje gång, vilket ger dig bättre förberedelse inför det verkliga provet.';
+  static const _infoTitle = 'Om Slutprovet';
+  static const _infoBody =
+      'Proven genereras dynamiskt från en stor frågebank med nya frågor varje gång, vilket ger dig bättre förberedelse inför det verkliga provet.';
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +50,11 @@ class TaxiMockExamsScreen extends StatelessWidget {
           bottom: BorderSide(color: AppColors.surfaceVariant, width: 1),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, size: 24, color: AppColors.primaryContainer),
+          icon: const Icon(
+            Icons.arrow_back_rounded,
+            size: 24,
+            color: AppColors.primaryContainer,
+          ),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -62,7 +64,7 @@ class TaxiMockExamsScreen extends StatelessWidget {
           },
         ),
         title: Text(
-          'Mock Exams',
+          'Taxi Teoriprov',
           style: GoogleFonts.publicSans(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -75,17 +77,16 @@ class TaxiMockExamsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 88),
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Slutprov Taxi',
+                'Slutprov',
                 style: GoogleFonts.publicSans(
-                  fontSize: 32,
+                  fontSize: 48 / 2,
                   fontWeight: FontWeight.w700,
-                  height: 40 / 32,
-                  letterSpacing: -0.02 * 32,
+                  height: 1.2,
                   color: AppColors.onSurface,
                 ),
               ),
@@ -95,57 +96,51 @@ class TaxiMockExamsScreen extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  height: 24 / 16,
+                  height: 1.35,
                   color: AppColors.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 16),
-              _InfoTipCard(body: _infoBoxBody),
-              const SizedBox(height: 24),
-              _DelprovCard(
-                title: 'Delprov 1: Säkerhet och beteende',
-                subtitle: 'Kunskap om fordon, passagerare och säkerhet.',
-                headerIcon: Icons.shield_rounded,
-                statQuestions: '70 Frågor (65 p)',
-                statPass: '48 Krav för godkänt',
-                statTime: '50 Minuter',
-                topics: const [
-                  'GPS/Karta',
-                  'Körekonomi',
-                  'Säkerhet',
-                  'Bemötande',
-                  'Fordonskännedom',
-                ],
-                onStart: () => tryStartTaxiSlutprov(context, 1),
+              const SizedBox(height: 20),
+              _InfoCard(title: _infoTitle, body: _infoBody),
+              const SizedBox(height: 18),
+              _ExamCard(
+                title: 'Delprov 1',
+                subtitle: 'Kartläsning & Säkerhet',
+                icon: Icons.directions_car_filled_outlined,
+                iconColor: const Color(0xFF2F6DB5),
+                iconBackground: const Color(0xFFDCE9FF),
+                statTime: '50 minuter',
+                statQuestions: '70 frågor (65 p)',
+                statPass: 'Krav: 48 rätt',
+                onTap: () => tryStartTaxiSlutprov(context, 1),
               ),
-              const SizedBox(height: 16),
-              _DelprovCard(
-                title: 'Delprov 2: Lagstiftning',
-                subtitle: 'Regelverk för taxitrafik och allmänna trafikregler.',
-                headerIcon: Icons.gavel_rounded,
-                statQuestions: '50 Frågor (46 p)',
-                statPass: '34 Krav för godkänt',
-                statTime: '50 Minuter',
-                topics: const [
-                  'Taxitrafik regler',
-                  'Trafikregler',
-                  'Vägmärken',
-                ],
-                onStart: () => tryStartTaxiSlutprov(context, 2),
+              const SizedBox(height: 14),
+              _ExamCard(
+                title: 'Delprov 2',
+                subtitle: 'Lagstiftning & Regler',
+                icon: Icons.gavel_rounded,
+                iconColor: const Color(0xFF9146CE),
+                iconBackground: const Color(0xFFF1E4FF),
+                statTime: '50 minuter',
+                statQuestions: '50 frågor (46 p)',
+                statPass: 'Krav: 34 rätt',
+                onTap: () => tryStartTaxiSlutprov(context, 2),
               ),
-              const SizedBox(height: 32),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const TaxiShellBottomNav(selectedRoute: '/taxi-mock-exams'),
+      bottomNavigationBar: const TaxiShellBottomNav(
+        selectedRoute: '/taxi-mock-exams',
+      ),
     );
   }
 }
 
-class _InfoTipCard extends StatelessWidget {
-  const _InfoTipCard({required this.body});
+class _InfoCard extends StatelessWidget {
+  const _InfoCard({required this.title, required this.body});
 
+  final String title;
   final String body;
 
   @override
@@ -154,23 +149,42 @@ class _InfoTipCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerHigh,
+        color: const Color(0xFFD6E8FF),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFC0D6F4)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lightbulb_rounded, size: 24, color: AppColors.primaryContainer),
+          const Icon(
+            Icons.info_outline_rounded,
+            size: 24,
+            color: AppColors.primaryContainer,
+          ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              body,
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                height: 20 / 14,
-                color: AppColors.onSurfaceVariant,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.publicSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryContainer,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  body,
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    height: 1.35,
+                    color: AppColors.onSurface,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -179,240 +193,147 @@ class _InfoTipCard extends StatelessWidget {
   }
 }
 
-class _DelprovCard extends StatelessWidget {
-  const _DelprovCard({
+class _ExamCard extends StatelessWidget {
+  const _ExamCard({
     required this.title,
     required this.subtitle,
-    required this.headerIcon,
+    required this.icon,
+    required this.iconColor,
+    required this.iconBackground,
+    required this.statTime,
     required this.statQuestions,
     required this.statPass,
-    required this.statTime,
-    required this.topics,
-    required this.onStart,
+    required this.onTap,
   });
 
   final String title;
   final String subtitle;
-  final IconData headerIcon;
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBackground;
+  final String statTime;
   final String statQuestions;
   final String statPass;
-  final String statTime;
-  final List<String> topics;
-  final VoidCallback onStart;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: const Border(
-          left: BorderSide(color: AppColors.primary, width: 5),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: GoogleFonts.publicSans(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          height: 28 / 20,
-                          color: AppColors.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          height: 20 / 14,
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: const BoxDecoration(
-                    color: AppColors.secondaryContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(headerIcon, size: 24, color: AppColors.primary),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainerHigh,
-                borderRadius: BorderRadius.circular(12),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.surfaceVariant),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              child: Row(
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: iconBackground,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: iconColor, size: 24),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: GoogleFonts.publicSans(
+                            fontSize: 36 / 2,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style: GoogleFonts.inter(
+                            fontSize: 30 / 2,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    size: 28,
+                    color: AppColors.onSurfaceVariant,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
                 children: [
                   Expanded(
-                    child: _StatSegment(
-                      icon: Icons.article_outlined,
-                      line: statQuestions,
+                    child: _InlineStat(
+                      icon: Icons.access_time_rounded,
+                      text: statTime,
                     ),
                   ),
-                  Container(
-                    width: 1,
-                    height: 52,
-                    color: AppColors.outlineVariant.withValues(alpha: 0.6),
-                  ),
                   Expanded(
-                    child: _StatSegment(
-                      icon: Icons.check_circle_outline_rounded,
-                      line: statPass,
-                    ),
-                  ),
-                  Container(
-                    width: 1,
-                    height: 52,
-                    color: AppColors.outlineVariant.withValues(alpha: 0.6),
-                  ),
-                  Expanded(
-                    child: _StatSegment(
-                      icon: Icons.timer_outlined,
-                      line: statTime,
+                    child: _InlineStat(
+                      icon: Icons.format_list_bulleted_rounded,
+                      text: statQuestions,
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Innehåller ämnen:',
-              style: GoogleFonts.publicSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                height: 20 / 14,
-                letterSpacing: 0.02 * 14,
-                color: AppColors.onSurface,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: topics
-                  .map(
-                    (t) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerHigh,
-                        borderRadius: BorderRadius.circular(9999),
-                      ),
-                      child: Text(
-                        t,
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          height: 18 / 13,
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: onStart,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.onPrimary,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: const StadiumBorder(),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Starta Prov',
-                      style: GoogleFonts.publicSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        height: 20 / 14,
-                        letterSpacing: 0.02 * 14,
-                        color: AppColors.onPrimary,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.play_arrow_rounded, size: 22, color: AppColors.onPrimary),
-                  ],
-                ),
-              ),
-            ),
-          ],
+              const SizedBox(height: 6),
+              _InlineStat(icon: Icons.military_tech_outlined, text: statPass),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _StatSegment extends StatelessWidget {
-  const _StatSegment({
-    required this.icon,
-    required this.line,
-  });
+class _InlineStat extends StatelessWidget {
+  const _InlineStat({required this.icon, required this.text});
 
   final IconData icon;
-  final String line;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 20, color: AppColors.onSurfaceVariant),
-          const SizedBox(height: 8),
-          Text(
-            line,
-            textAlign: TextAlign.center,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: AppColors.onSurfaceVariant),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            text,
             style: GoogleFonts.inter(
-              fontSize: 12,
+              fontSize: 28 / 2,
               fontWeight: FontWeight.w500,
-              height: 16 / 12,
-              color: AppColors.onSurface,
+              color: AppColors.onSurfaceVariant,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
