@@ -53,6 +53,7 @@ class TaxiBankImage extends StatelessWidget {
             width: width,
             height: height,
             semanticLabel: _label,
+            errorBuilder: (context, error, stackTrace) => _placeholder(),
           );
         }
         return Image.asset(
