@@ -1,14 +1,11 @@
 rules_version = '2';
-// Bank images: valid App Check only (no Firebase Auth required).
-// Taxi practice routes are public in the app, but App Check still restricts traffic to your app.
-// Register iOS/Android under App Check; use debug provider + token for simulator/dev.
-//
-// Firebase Console: App Check → enforce for Cloud Storage (recommended).
+// Question-bank images: public read so all users see illustrations reliably (no Auth/App Check).
+// Download URLs and HTTPS fetches work from any client. Writes stay disabled.
 
 service firebase.storage {
   match /b/{bucket}/o {
     match /taxi/bank/images/{allPaths=**} {
-      allow read: if request.appCheck.valid;
+      allow read: if true;
       allow write: if false;
     }
   }

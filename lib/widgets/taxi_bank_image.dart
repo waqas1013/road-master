@@ -1,12 +1,13 @@
-import 'dart:typed_data';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../services/taxi_storage_image_cache.dart';
 import '../theme/app_colors.dart';
 
-/// Question-bank image: optional direct HTTPS, else Firebase Storage from [assetPath], else local asset.
+/// Fallback host for bank filenames (legacy export); used if Storage has no object.
+const _kBankImageCdnBase = 'https://taxi-license-2c6b0.web.app/assets/';
+
+/// Question-bank image: [httpsUrl] if set, else Storage (or CDN / bundled asset).
 class TaxiBankImage extends StatelessWidget {
   const TaxiBankImage({
     super.key,
@@ -29,7 +30,10 @@ class TaxiBankImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final direct = httpsUrl?.trim();
     if (direct != null && direct.isNotEmpty) {
-      return _cachedNetwork(direct);
+      return _cachedNetwork(
+        direct,
+        thenTryAssetPath: assetPath?.trim(),
+      );
     }
 
     final path = assetPath?.trim();
@@ -37,33 +41,31 @@ class TaxiBankImage extends StatelessWidget {
       return _placeholder();
     }
 
-    final future = TaxiStorageImageCache.instance.getBankImageBytesForAssetPath(path);
+    final cdn = _cdnUrlForBankPath(path);
+    final future = TaxiStorageImageCache.instance.getDownloadUrlForAssetPath(path);
 
-    return FutureBuilder<Uint8List?>(
+    return FutureBuilder<String?>(
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _loading();
         }
-        final bytes = snapshot.data;
-        if (bytes != null && bytes.isNotEmpty) {
-          return Image.memory(
-            bytes,
-            fit: fit,
-            width: width,
-            height: height,
-            semanticLabel: _label,
-            errorBuilder: (context, error, stackTrace) => _placeholder(),
+        final storageUrl = snapshot.data?.trim();
+        if (storageUrl != null && storageUrl.isNotEmpty) {
+          return _cachedNetwork(
+            storageUrl,
+            thenTryAssetPath: path,
+            thenTryCdnUrl: cdn,
           );
         }
-        return Image.asset(
-          path,
-          fit: fit,
-          width: width,
-          height: height,
-          semanticLabel: _label,
-          errorBuilder: (context, error, stackTrace) => _placeholder(),
-        );
+        if (cdn != null && cdn.isNotEmpty) {
+          return _cachedNetwork(
+            cdn,
+            thenTryAssetPath: path,
+            thenTryCdnUrl: null,
+          );
+        }
+        return _assetOnly(path);
       },
     );
   }
@@ -74,7 +76,19 @@ class TaxiBankImage extends StatelessWidget {
     return s;
   }
 
-  Widget _cachedNetwork(String url) {
+  String? _cdnUrlForBankPath(String assetPath) {
+    const prefix = 'assets/taxi/bank/images/';
+    if (!assetPath.startsWith(prefix)) return null;
+    final name = assetPath.substring(prefix.length);
+    if (name.isEmpty || name.contains('..')) return null;
+    return '$_kBankImageCdnBase$name';
+  }
+
+  Widget _cachedNetwork(
+    String url, {
+    String? thenTryAssetPath,
+    String? thenTryCdnUrl,
+  }) {
     return CachedNetworkImage(
       imageUrl: url,
       fit: fit,
@@ -82,19 +96,29 @@ class TaxiBankImage extends StatelessWidget {
       height: height,
       placeholder: (context, _) => _loading(),
       errorWidget: (context, u, error) {
-        final path = assetPath?.trim();
-        if (path != null && path.isNotEmpty) {
-          return Image.asset(
-            path,
-            fit: fit,
-            width: width,
-            height: height,
-            semanticLabel: _label,
-            errorBuilder: (c, e, s) => _placeholder(),
+        if (thenTryCdnUrl != null && thenTryCdnUrl.isNotEmpty && thenTryCdnUrl != url) {
+          return _cachedNetwork(
+            thenTryCdnUrl,
+            thenTryAssetPath: thenTryAssetPath,
+            thenTryCdnUrl: null,
           );
+        }
+        if (thenTryAssetPath != null && thenTryAssetPath.isNotEmpty) {
+          return _assetOnly(thenTryAssetPath);
         }
         return _placeholder();
       },
+    );
+  }
+
+  Widget _assetOnly(String path) {
+    return Image.asset(
+      path,
+      fit: fit,
+      width: width,
+      height: height,
+      semanticLabel: _label,
+      errorBuilder: (context, error, stackTrace) => _placeholder(),
     );
   }
 

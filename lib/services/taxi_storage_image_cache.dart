@@ -2,25 +2,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 
-/// Loads `assets/taxi/bank/images/...` from Firebase Storage via the SDK (not
-/// plain HTTP), so **App Check** (and Auth if present) are attached per your rules.
+/// Resolves `assets/taxi/bank/images/...` to Firebase Storage download URLs.
 ///
-/// Objects must live under `taxi/bank/images/<filename>` (see
-/// [scripts/upload_taxi_bank_images_to_storage.sh]). Falls back to bundled
-/// assets when Storage has no object or Firebase is unavailable.
-///
-/// **Why not `getDownloadURL` + `CachedNetworkImage`?** Plain GETs to download
-/// URLs do not carry Firebase credentials; rules that require App Check or Auth
-/// then deny the image load.
+/// Objects live under `taxi/bank/images/<filename>`. Storage rules allow **public
+/// read** for that prefix so images load without Auth/App Check (see [storage.rules]).
 class TaxiStorageImageCache {
   TaxiStorageImageCache._();
   static final TaxiStorageImageCache instance = TaxiStorageImageCache._();
 
   static const _bankPrefix = 'assets/taxi/bank/images/';
   static const _storageRoot = 'taxi/bank/images';
-  static const _maxImageBytes = 15 * 1024 * 1024;
 
-  final Map<String, Future<Uint8List?>> _bytesCache = {};
+  final Map<String, Future<String?>> _urlCache = {};
 
   /// Storage path (e.g. `taxi/bank/images/foo.png`) or null if [assetPath] is not a bank image.
   String? storagePathForAsset(String assetPath) {
@@ -30,23 +23,21 @@ class TaxiStorageImageCache {
     return '$_storageRoot/$name';
   }
 
-  /// Cached image bytes for a bank [assetPath], or null to use local asset / HTTPS URL.
+  /// Public download URL for a bank asset path, or null if unavailable / not a bank path.
   ///
-  /// Failed loads are **not** kept in cache so a later retry (e.g. after App Check warms up)
-  /// can succeed instead of sticking on the first error forever.
-  Future<Uint8List?> getBankImageBytesForAssetPath(String assetPath) {
+  /// Failed lookups are **not** kept in cache so retries can succeed after network/auth blips.
+  Future<String?> getDownloadUrlForAssetPath(String assetPath) {
     final sp = storagePathForAsset(assetPath);
     if (sp == null) return Future.value(null);
 
-    return _bytesCache.putIfAbsent(sp, () => _loadBytesUncachedOnFailure(sp));
+    return _urlCache.putIfAbsent(sp, () => _resolveUrlUncachedOnFailure(sp));
   }
 
-  Future<Uint8List?> _loadBytesUncachedOnFailure(String sp) async {
+  Future<String?> _resolveUrlUncachedOnFailure(String sp) async {
     try {
       if (Firebase.apps.isEmpty) return null;
       final ref = FirebaseStorage.instance.ref(sp);
-      final bytes = await ref.getData(_maxImageBytes);
-      if (bytes != null && bytes.isNotEmpty) return bytes;
+      return await ref.getDownloadURL();
     } on FirebaseException catch (e) {
       if (e.code != 'object-not-found') {
         debugPrint('TaxiStorageImageCache: $sp — ${e.code} ${e.message}');
@@ -54,7 +45,7 @@ class TaxiStorageImageCache {
     } catch (e, st) {
       debugPrint('TaxiStorageImageCache: $sp — $e\n$st');
     }
-    _bytesCache.remove(sp);
+    _urlCache.remove(sp);
     return null;
   }
 }
