@@ -16,6 +16,7 @@ import '../services/lagar_practice_repository.dart';
 import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
 import '../widgets/taxi_bank_image.dart';
+import '../widgets/taxi_bank_image_lightbox.dart';
 import '../widgets/taxi_option_step_text.dart';
 import '../widgets/taxi_shell_bottom_nav.dart';
 
@@ -573,13 +574,27 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
       final url = i < urls.length ? urls[i] : '';
       if (path.isEmpty && url.isEmpty) continue;
       imageBlocks.add(
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: TaxiBankImage(
-            assetPath: path.isEmpty ? null : path,
-            httpsUrl: url.isEmpty ? null : url,
-            fit: BoxFit.fitWidth,
-            width: double.infinity,
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              showTaxiBankImageLightbox(
+                context,
+                assetPath: path.isEmpty ? null : path,
+                httpsUrl: url.isEmpty ? null : url,
+                semanticLabel: 'Förklaring',
+              );
+            },
+            borderRadius: BorderRadius.circular(8),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: TaxiBankImage(
+                assetPath: path.isEmpty ? null : path,
+                httpsUrl: url.isEmpty ? null : url,
+                fit: BoxFit.fitWidth,
+                width: double.infinity,
+              ),
+            ),
           ),
         ),
       );
