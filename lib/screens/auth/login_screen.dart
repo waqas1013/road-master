@@ -219,11 +219,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextField(
                     controller: _passwordCtrl,
                     obscureText: _obscurePassword,
+                    obscuringCharacter: '•',
                     autofillHints: const [AutofillHints.password],
                     textInputAction: TextInputAction.done,
                     onSubmitted: (_) => _submit(),
                     style: GoogleFonts.inter(fontSize: 15, color: AppColors.onSurface),
                     decoration: InputDecoration(
+                      hintText: '••••••••',
+                      hintStyle: GoogleFonts.inter(
+                        fontSize: 18,
+                        letterSpacing: 1.2,
+                        color: AppColors.outline,
+                        fontWeight: FontWeight.w600,
+                      ),
                       prefixIcon: Icon(
                         Icons.lock_outline_rounded,
                         size: 22,

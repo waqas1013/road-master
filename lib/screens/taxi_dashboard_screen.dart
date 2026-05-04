@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../data/taxi_karta_practice_sets.dart';
@@ -99,6 +100,23 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
     return ((p * 100).round()).clamp(0, 100);
   }
 
+  String _welcomeText() {
+    final user = FirebaseAuth.instance.currentUser;
+    final displayName = user?.displayName?.trim() ?? '';
+    if (displayName.isNotEmpty) {
+      final firstName = displayName.split(RegExp(r'\s+')).first;
+      return 'Välkommen tillbaka, $firstName';
+    }
+
+    final email = user?.email?.trim() ?? '';
+    if (email.isNotEmpty && email.contains('@')) {
+      final localPart = email.split('@').first.trim();
+      if (localPart.isNotEmpty) return 'Välkommen tillbaka, $localPart';
+    }
+
+    return 'Välkommen tillbaka';
+  }
+
   @override
   Widget build(BuildContext context) {
     final loggedIn =
@@ -178,7 +196,7 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Välkommen tillbaka',
+                _welcomeText(),
                 style: GoogleFonts.publicSans(
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
