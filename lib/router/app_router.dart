@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import '../screens/onboarding_screen.dart';
-import '../screens/login_screen.dart';
+import '../screens/auth/login_screen.dart';
+import '../screens/auth/register_screen.dart';
+import '../screens/auth/forgot_password_screen.dart';
 import '../screens/category_selection_screen.dart';
 import '../screens/dashboard_screen.dart';
 import '../screens/study_screen.dart';
@@ -24,11 +27,37 @@ import '../screens/taxi_lagar_review_results_screen.dart';
 import '../screens/taxi_karta_review_results_screen.dart';
 import '../screens/taxi_mock_exams_screen.dart';
 
+/// Routes that don't require authentication (browsing allowed).
+const _publicPaths = {
+  '/',
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/category-selection',
+  '/taxi-dashboard',
+  '/taxi-sakerhet',
+  '/taxi-lagstiftning',
+  '/taxi-karta',
+  '/dashboard',
+};
+
 class AppRouter {
   static final GoRouter router = GoRouter(
-    /// Start at onboarding so users see **Kom igång** → **Välj behörighet** (B vs Taxi).
-    /// During dev you can temporarily set this to `/taxi-dashboard` to skip straight to taxi.
     initialLocation: '/',
+    redirect: (context, state) {
+      final loggedIn = FirebaseAuth.instance.currentUser != null;
+      final path = state.uri.path;
+
+      if (loggedIn && (path == '/login' || path == '/register')) {
+        return '/category-selection';
+      }
+
+      if (!loggedIn && !_publicPaths.contains(path)) {
+        return '/login';
+      }
+
+      return null;
+    },
     routes: [
       GoRoute(
         path: '/',
@@ -37,6 +66,14 @@ class AppRouter {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
       GoRoute(
         path: '/category-selection',

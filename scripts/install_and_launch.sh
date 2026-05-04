@@ -10,11 +10,16 @@ ANDROID_PKG="com.roadmaster.road_master"
 IOS_BUNDLE="com.roadmaster.roadMaster"
 
 echo "==> Android ($ANDROID_DEVICE)"
-adb -s "$ANDROID_DEVICE" shell pm trim-caches 500M 2>/dev/null || true
+# Free as much cache as the system allows (debug APK + dexopt often needs >1GB free).
+adb -s "$ANDROID_DEVICE" shell pm trim-caches 2147483647 2>/dev/null || true
+adb -s "$ANDROID_DEVICE" uninstall "$ANDROID_PKG" 2>/dev/null || true
 if flutter install --debug -d "$ANDROID_DEVICE"; then
   adb -s "$ANDROID_DEVICE" shell am start -n "${ANDROID_PKG}/.MainActivity"
 else
-  echo "Warning: Android install failed (e.g. emulator disk full). iOS will still run." >&2
+  echo "Android install failed. If you see INSTALL_FAILED_INSUFFICIENT_STORAGE, wipe the AVD:" >&2
+  echo "  Android Studio → Device Manager → ⋮ on this emulator → Wipe Data → cold boot." >&2
+  echo "  Or from a terminal (emulator must be stopped): emulator -avd Pixel_8 -wipe-data" >&2
+  echo "Warning: Android install failed. iOS will still run." >&2
 fi
 
 echo "==> iOS simulator ($IOS_DEVICE)"

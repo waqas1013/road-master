@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/auth_service.dart';
 import '../theme/app_colors.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -8,11 +10,14 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final displayName = user?.displayName ?? 'Användare';
+    final email = user?.email ?? '';
+
     return Drawer(
       backgroundColor: Colors.white,
       child: Column(
         children: [
-          // Header
           Container(
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top + 24,
@@ -29,37 +34,44 @@ class AppDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile Picture
                 Container(
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
+                    color: AppColors.primaryLight,
                     border: Border.all(color: AppColors.primary, width: 2),
-                    image: const DecorationImage(
-                      image: NetworkImage(
-                          'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200'),
-                      fit: BoxFit.cover,
+                  ),
+                  child: Center(
+                    child: Text(
+                      displayName.isNotEmpty ? displayName[0].toUpperCase() : '?',
+                      style: GoogleFonts.publicSans(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Användarnamn',
+                  user != null ? displayName : 'Inte inloggad',
                   style: GoogleFonts.publicSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: AppColors.primary,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Taxi-ID: 88219',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    color: AppColors.onSurfaceVariant,
+                if (email.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    email,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AppColors.onSurfaceVariant,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -115,7 +127,11 @@ class AppDrawer extends StatelessWidget {
             child: Column(
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await AuthService.instance.signOut();
+                    if (context.mounted) context.go('/login');
+                  },
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),

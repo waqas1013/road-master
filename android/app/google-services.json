@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "685054591368",
+    "project_id": "road-master-se",
+    "storage_bucket": "road-master-se.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685054591368:android:512ff59755b5fa4bc5ba3d",
+        "android_client_info": {
+          "package_name": "com.roadmaster.road_master"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFyc0CKb83ouLPTFLKA5bcmoWVgJlQrDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
