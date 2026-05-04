@@ -11,11 +11,21 @@ import 'services/lagar_practice_repository.dart';
 import 'services/karta_practice_repository.dart';
 import 'theme/app_theme.dart';
 
+/// Production web: set `--dart-define=RECAPTCHA_SITE_KEY=<key>` from Firebase App Check (reCAPTCHA v3).
+const _webRecaptchaSiteKey = String.fromEnvironment('RECAPTCHA_SITE_KEY');
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await FirebaseAppCheck.instance.activate(
+    providerWeb: kIsWeb
+        ? (kDebugMode
+            ? WebDebugProvider()
+            : (_webRecaptchaSiteKey.isEmpty
+                ? WebDebugProvider()
+                : ReCaptchaV3Provider(_webRecaptchaSiteKey)))
+        : null,
     providerAndroid: kDebugMode
         ? const AndroidDebugProvider()
         : const AndroidPlayIntegrityProvider(),
