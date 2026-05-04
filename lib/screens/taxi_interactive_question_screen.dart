@@ -12,6 +12,7 @@ import '../services/karta_practice_repository.dart';
 import '../services/lagar_practice_repository.dart';
 import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
+import '../widgets/taxi_bank_image.dart';
 import '../widgets/taxi_option_step_text.dart';
 
 /// Interactive practice question — layout aligned with Stitch **Interactive Practice Question v2**.
@@ -529,41 +530,17 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
       final path = i < assetPaths.length ? assetPaths[i] : '';
       final url = i < urls.length ? urls[i] : '';
       if (path.isEmpty && url.isEmpty) continue;
-      if (path.isNotEmpty) {
-        imageBlocks.add(
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              path,
-              width: double.infinity,
-              fit: BoxFit.fitWidth,
-              errorBuilder: (context, error, stackTrace) {
-                if (url.isNotEmpty) {
-                  return Image.network(
-                    url,
-                    width: double.infinity,
-                    fit: BoxFit.fitWidth,
-                    errorBuilder: (c, e, s) => _imagePlaceholder(),
-                  );
-                }
-                return _imagePlaceholder();
-              },
-            ),
+      imageBlocks.add(
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: TaxiBankImage(
+            assetPath: path.isEmpty ? null : path,
+            httpsUrl: url.isEmpty ? null : url,
+            fit: BoxFit.fitWidth,
+            width: double.infinity,
           ),
-        );
-      } else {
-        imageBlocks.add(
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              url,
-              width: double.infinity,
-              fit: BoxFit.fitWidth,
-              errorBuilder: (context, error, stackTrace) => _imagePlaceholder(),
-            ),
-          ),
-        );
-      }
+        ),
+      );
     }
 
     if (imageBlocks.isEmpty && (text == null || text.isEmpty)) {
@@ -665,33 +642,17 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
     final label = q.imageSemanticLabel ?? q.designIllustrationPrompt ?? '';
     final path = q.imageAssetPath;
     final url = q.imageNetworkUrl;
-    if (path != null) {
-      return Image.asset(
-        path,
-        fit: BoxFit.cover,
-        semanticLabel: label.isEmpty ? null : label,
-        errorBuilder: (context, error, stackTrace) {
-          if (url != null) {
-            return Image.network(
-              url,
-              fit: BoxFit.cover,
-              semanticLabel: label.isEmpty ? null : label,
-              errorBuilder: (c, e, s) => _imagePlaceholder(),
-            );
-          }
-          return _imagePlaceholder();
-        },
-      );
+    final p = path?.trim();
+    final u = url?.trim();
+    if ((p == null || p.isEmpty) && (u == null || u.isEmpty)) {
+      return _imagePlaceholder();
     }
-    if (url != null) {
-      return Image.network(
-        url,
-        fit: BoxFit.cover,
-        semanticLabel: label.isEmpty ? null : label,
-        errorBuilder: (context, error, stackTrace) => _imagePlaceholder(),
-      );
-    }
-    return _imagePlaceholder();
+    return TaxiBankImage(
+      assetPath: p,
+      httpsUrl: u,
+      fit: BoxFit.cover,
+      semanticLabel: label,
+    );
   }
 
   Widget _imagePlaceholder() {

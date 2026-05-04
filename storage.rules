@@ -1,0 +1,14 @@
+rules_version = '2';
+// Question bank images: signed-in users only + valid App Check token.
+// Register the iOS/Android apps under Firebase App Check; use Debug provider + debug token for dev/simulator.
+//
+// Firebase Console: App Check → enforce for Cloud Storage (recommended).
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /taxi/bank/images/{allPaths=**} {
+      allow read: if request.auth != null && request.appCheck.valid;
+      allow write: if false;
+    }
+  }
+}

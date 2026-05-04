@@ -9,8 +9,11 @@ import '../models/taxi_practice_question.dart';
 ///
 /// **JSON shape:** either a top-level array `[{...}, ...]` or `{ "questions": [...] }`.
 /// Each object maps to [TaxiPracticeQuestion] (see [_parseQuestion] keys).
-/// Replace or append to that file when you export from **taxi-license**; keep images
-/// under `assets/taxi/…` and reference them in `imageAssetPath` / `explanationImageAssetPaths`.
+/// Replace or append to that file when you export from **taxi-license**.
+///
+/// **Images (Phase 2):** paths under `assets/taxi/bank/images/` in JSON are served from
+/// **Firebase Storage** at `taxi/bank/images/<file>` when available; otherwise the
+/// bundled asset is used. See [scripts/upload_taxi_bank_images_to_storage.sh].
 class TaxiQuestionBank {
   TaxiQuestionBank._();
   static final TaxiQuestionBank instance = TaxiQuestionBank._();
