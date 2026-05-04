@@ -522,33 +522,48 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
     final text = q.explanationText?.trim();
     final imageBlocks = <Widget>[];
 
-    for (final path in q.explanationImageAssetPaths) {
-      if (path.isEmpty) continue;
-      imageBlocks.add(
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.asset(
-            path,
-            width: double.infinity,
-            fit: BoxFit.fitWidth,
-            errorBuilder: (context, error, stackTrace) => _imagePlaceholder(),
+    final assetPaths = q.explanationImageAssetPaths;
+    final urls = q.explanationImageUrls;
+    final count = assetPaths.length > urls.length ? assetPaths.length : urls.length;
+    for (var i = 0; i < count; i++) {
+      final path = i < assetPaths.length ? assetPaths[i] : '';
+      final url = i < urls.length ? urls[i] : '';
+      if (path.isEmpty && url.isEmpty) continue;
+      if (path.isNotEmpty) {
+        imageBlocks.add(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              path,
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) {
+                if (url.isNotEmpty) {
+                  return Image.network(
+                    url,
+                    width: double.infinity,
+                    fit: BoxFit.fitWidth,
+                    errorBuilder: (c, e, s) => _imagePlaceholder(),
+                  );
+                }
+                return _imagePlaceholder();
+              },
+            ),
           ),
-        ),
-      );
-    }
-    for (final url in q.explanationImageUrls) {
-      if (url.isEmpty) continue;
-      imageBlocks.add(
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.network(
-            url,
-            width: double.infinity,
-            fit: BoxFit.fitWidth,
-            errorBuilder: (context, error, stackTrace) => _imagePlaceholder(),
+        );
+      } else {
+        imageBlocks.add(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              url,
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) => _imagePlaceholder(),
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
 
     if (imageBlocks.isEmpty && (text == null || text.isEmpty)) {
@@ -649,15 +664,25 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
   Widget _buildQuestionImage() {
     final label = q.imageSemanticLabel ?? q.designIllustrationPrompt ?? '';
     final path = q.imageAssetPath;
+    final url = q.imageNetworkUrl;
     if (path != null) {
       return Image.asset(
         path,
         fit: BoxFit.cover,
         semanticLabel: label.isEmpty ? null : label,
-        errorBuilder: (context, error, stackTrace) => _imagePlaceholder(),
+        errorBuilder: (context, error, stackTrace) {
+          if (url != null) {
+            return Image.network(
+              url,
+              fit: BoxFit.cover,
+              semanticLabel: label.isEmpty ? null : label,
+              errorBuilder: (c, e, s) => _imagePlaceholder(),
+            );
+          }
+          return _imagePlaceholder();
+        },
       );
     }
-    final url = q.imageNetworkUrl;
     if (url != null) {
       return Image.network(
         url,

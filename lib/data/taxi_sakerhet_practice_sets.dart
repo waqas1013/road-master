@@ -3,7 +3,7 @@ import 'taxi_question_bank.dart';
 import 'taxi_sakerhet_questions.dart';
 
 /// All **Säkerhet** questions from the bank are split evenly into this many practice cards.
-const int kSakerhetPracticeSetCount = 4;
+const int kSakerhetPracticeSetCount = 8;
 
 List<List<TaxiPracticeQuestion>>? _sakerhetPartitions;
 

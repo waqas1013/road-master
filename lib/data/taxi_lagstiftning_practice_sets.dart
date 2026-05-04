@@ -3,7 +3,7 @@ import 'taxi_question_bank.dart';
 
 const String kTaxiModuleLagstiftning = 'lagstiftning';
 
-const int kLagstiftningPracticeSetCount = 4;
+const int kLagstiftningPracticeSetCount = 10;
 
 List<List<TaxiPracticeQuestion>>? _lagstiftningPartitions;
 
