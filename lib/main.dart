@@ -1,4 +1,5 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'router/app_router.dart';
 import 'services/sakerhet_practice_repository.dart';
 import 'services/lagar_practice_repository.dart';
 import 'services/karta_practice_repository.dart';
+import 'services/mock_exam_history.dart';
 import 'theme/app_theme.dart';
 
 /// Production web: set `--dart-define=RECAPTCHA_SITE_KEY=<key>` from Firebase App Check (reCAPTCHA v3).
@@ -21,10 +23,10 @@ Future<void> main() async {
   await FirebaseAppCheck.instance.activate(
     providerWeb: kIsWeb
         ? (kDebugMode
-            ? WebDebugProvider()
-            : (_webRecaptchaSiteKey.isEmpty
-                ? WebDebugProvider()
-                : ReCaptchaV3Provider(_webRecaptchaSiteKey)))
+              ? WebDebugProvider()
+              : (_webRecaptchaSiteKey.isEmpty
+                    ? WebDebugProvider()
+                    : ReCaptchaV3Provider(_webRecaptchaSiteKey)))
         : null,
     providerAndroid: kDebugMode
         ? const AndroidDebugProvider()
@@ -38,11 +40,13 @@ Future<void> main() async {
   await SakerhetPracticeRepository.init();
   await LagarPracticeRepository.init();
   await KartaPracticeRepository.init();
-  runApp(
-    const ProviderScope(
-      child: RoadMasterApp(),
-    ),
-  );
+  if (FirebaseAuth.instance.currentUser == null) {
+    await SakerhetPracticeRepository.clearLocalCacheForPrivacy();
+    await LagarPracticeRepository.clearLocalCacheForPrivacy();
+    await KartaPracticeRepository.clearLocalCacheForPrivacy();
+    await MockExamHistory.clearLocalCacheForPrivacy();
+  }
+  runApp(const ProviderScope(child: RoadMasterApp()));
 }
 
 class RoadMasterApp extends StatelessWidget {

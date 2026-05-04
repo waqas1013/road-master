@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,12 +38,12 @@ class KartaSetProgress {
   }
 
   Map<String, dynamic> toJson() => {
-        'nextQ': nextQuestionIndex,
-        'completed': completed,
-        'answers': answers.map((k, v) => MapEntry(k, v)),
-        'bookmarks': bookmarks.toList(),
-        'visitedThrough': visitedThrough,
-      };
+    'nextQ': nextQuestionIndex,
+    'completed': completed,
+    'answers': answers.map((k, v) => MapEntry(k, v)),
+    'bookmarks': bookmarks.toList(),
+    'visitedThrough': visitedThrough,
+  };
 
   static KartaSetProgress? fromJson(int practiceSet, String raw) {
     try {
@@ -98,36 +100,38 @@ class KartaSetProgress {
 }
 
 class KartaPracticeRepository {
-  KartaPracticeRepository._(this._prefs);
+  KartaPracticeRepository._() {
+    FirebaseAuth.instance.authStateChanges().listen(_onAuthChanged);
+  }
 
   static KartaPracticeRepository? _instance;
 
   static Future<void> init() async {
-    _instance = KartaPracticeRepository._(await SharedPreferences.getInstance());
+    _instance = KartaPracticeRepository._();
+    await _instance!._onAuthChanged(FirebaseAuth.instance.currentUser);
   }
 
   static KartaPracticeRepository get instance {
     final i = _instance;
     if (i == null) {
-      throw StateError('KartaPracticeRepository.init() must be called before runApp');
+      throw StateError(
+        'KartaPracticeRepository.init() must be called before runApp',
+      );
     }
     return i;
   }
 
-  final SharedPreferences _prefs;
-
+  final Map<int, KartaSetProgress> _cache = {};
   final ValueNotifier<int> progressRevision = ValueNotifier(0);
 
-  String _key(int practiceSet) => '$_keyPrefix$practiceSet';
-
-  KartaSetProgress? load(int practiceSet) {
-    final raw = _prefs.getString(_key(practiceSet));
-    if (raw == null || raw.isEmpty) return null;
-    return KartaSetProgress.fromJson(practiceSet, raw);
-  }
+  KartaSetProgress? load(int practiceSet) => _cache[practiceSet];
 
   Future<void> _save(KartaSetProgress p) async {
-    await _prefs.setString(_key(p.practiceSet), jsonEncode(p.toJson()));
+    _cache[p.practiceSet] = p;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      await _doc(uid, p.practiceSet).set(p.toJson());
+    }
     progressRevision.value++;
   }
 
@@ -136,7 +140,11 @@ class KartaPracticeRepository {
   }
 
   Future<void> clear(int practiceSet) async {
-    await _prefs.remove(_key(practiceSet));
+    _cache.remove(practiceSet);
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      await _doc(uid, practiceSet).delete();
+    }
     progressRevision.value++;
   }
 
@@ -146,14 +154,16 @@ class KartaPracticeRepository {
   }) async {
     final prev = load(practiceSet);
     if (prev == null) {
-      await _save(KartaSetProgress(
-        practiceSet: practiceSet,
-        nextQuestionIndex: 1,
-        completed: false,
-        answers: {},
-        bookmarks: {questionId},
-        visitedThrough: 1,
-      ));
+      await _save(
+        KartaSetProgress(
+          practiceSet: practiceSet,
+          nextQuestionIndex: 1,
+          completed: false,
+          answers: {},
+          bookmarks: {questionId},
+          visitedThrough: 1,
+        ),
+      );
       return;
     }
     final bookmarks = Set<String>.from(prev.bookmarks);
@@ -162,14 +172,16 @@ class KartaPracticeRepository {
     } else {
       bookmarks.add(questionId);
     }
-    await _save(KartaSetProgress(
-      practiceSet: practiceSet,
-      nextQuestionIndex: prev.nextQuestionIndex,
-      completed: prev.completed,
-      answers: Map<String, int>.from(prev.answers),
-      bookmarks: bookmarks,
-      visitedThrough: prev.visitedThrough,
-    ));
+    await _save(
+      KartaSetProgress(
+        practiceSet: practiceSet,
+        nextQuestionIndex: prev.nextQuestionIndex,
+        completed: prev.completed,
+        answers: Map<String, int>.from(prev.answers),
+        bookmarks: bookmarks,
+        visitedThrough: prev.visitedThrough,
+      ),
+    );
   }
 
   bool isBookmarked(int practiceSet, String questionId) {
@@ -186,14 +198,16 @@ class KartaPracticeRepository {
       questionOneBased,
       prev?.nextQuestionIndex ?? questionOneBased,
     );
-    await _save(KartaSetProgress(
-      practiceSet: practiceSet,
-      nextQuestionIndex: questionOneBased,
-      completed: false,
-      answers: answers,
-      bookmarks: bookmarks,
-      visitedThrough: visited,
-    ));
+    await _save(
+      KartaSetProgress(
+        practiceSet: practiceSet,
+        nextQuestionIndex: questionOneBased,
+        completed: false,
+        answers: answers,
+        bookmarks: bookmarks,
+        visitedThrough: visited,
+      ),
+    );
   }
 
   Future<void> recordAnswer({
@@ -210,14 +224,16 @@ class KartaPracticeRepository {
       currentQuestionIndex,
       prev?.nextQuestionIndex ?? currentQuestionIndex,
     );
-    await _save(KartaSetProgress(
-      practiceSet: practiceSet,
-      nextQuestionIndex: prev?.nextQuestionIndex ?? currentQuestionIndex,
-      completed: prev?.completed ?? false,
-      answers: answers,
-      bookmarks: Set<String>.from(prev?.bookmarks ?? {}),
-      visitedThrough: visited,
-    ));
+    await _save(
+      KartaSetProgress(
+        practiceSet: practiceSet,
+        nextQuestionIndex: prev?.nextQuestionIndex ?? currentQuestionIndex,
+        completed: prev?.completed ?? false,
+        answers: answers,
+        bookmarks: Set<String>.from(prev?.bookmarks ?? {}),
+        visitedThrough: visited,
+      ),
+    );
   }
 
   Future<void> advanceAfterNext({
@@ -234,28 +250,74 @@ class KartaPracticeRepository {
         totalInSet,
         prev?.nextQuestionIndex ?? totalInSet,
       );
-      await _save(KartaSetProgress(
-        practiceSet: practiceSet,
-        nextQuestionIndex: totalInSet,
-        completed: true,
-        answers: answers,
-        bookmarks: bookmarks,
-        visitedThrough: visited,
-      ));
+      await _save(
+        KartaSetProgress(
+          practiceSet: practiceSet,
+          nextQuestionIndex: totalInSet,
+          completed: true,
+          answers: answers,
+          bookmarks: bookmarks,
+          visitedThrough: visited,
+        ),
+      );
     } else {
       final visited = _maxVisited1(
         prev?.visitedThrough ?? 1,
         nextQuestionOneBased,
         prev?.nextQuestionIndex ?? nextQuestionOneBased,
       );
-      await _save(KartaSetProgress(
-        practiceSet: practiceSet,
-        nextQuestionIndex: nextQuestionOneBased,
-        completed: false,
-        answers: answers,
-        bookmarks: bookmarks,
-        visitedThrough: visited,
-      ));
+      await _save(
+        KartaSetProgress(
+          practiceSet: practiceSet,
+          nextQuestionIndex: nextQuestionOneBased,
+          completed: false,
+          answers: answers,
+          bookmarks: bookmarks,
+          visitedThrough: visited,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onAuthChanged(User? user) async {
+    _cache.clear();
+    if (user != null) {
+      final snap = await _collection(user.uid).get();
+      for (final d in snap.docs) {
+        final set = _setFromDocId(d.id);
+        if (set == null) continue;
+        final parsed = KartaSetProgress.fromJson(set, jsonEncode(d.data()));
+        if (parsed != null) _cache[set] = parsed;
+      }
+    }
+    progressRevision.value++;
+  }
+
+  static CollectionReference<Map<String, dynamic>> _collection(String uid) =>
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('taxi_karta_progress');
+
+  static DocumentReference<Map<String, dynamic>> _doc(
+    String uid,
+    int practiceSet,
+  ) => _collection(uid).doc('set_$practiceSet');
+
+  static int? _setFromDocId(String id) {
+    if (!id.startsWith('set_')) return null;
+    return int.tryParse(id.substring(4));
+  }
+
+  /// Removes old local-only progress from previous app versions.
+  static Future<void> clearLocalCacheForPrivacy() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs
+        .getKeys()
+        .where((k) => k.startsWith(_keyPrefix))
+        .toList();
+    for (final k in keys) {
+      await prefs.remove(k);
     }
   }
 }

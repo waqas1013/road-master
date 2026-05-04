@@ -1,5 +1,5 @@
-import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Persisted slutprov attempts for Min statistik / Senaste Slutprov.
@@ -18,30 +18,33 @@ class MockExamHistoryEntry {
   final int total;
   final bool passed;
 
-  DateTime get completedAt => DateTime.fromMillisecondsSinceEpoch(completedAtMillis, isUtc: false);
+  DateTime get completedAt =>
+      DateTime.fromMillisecondsSinceEpoch(completedAtMillis, isUtc: false);
 
   int get scorePercent => total > 0 ? ((correct * 100) / total).round() : 0;
 
   Map<String, dynamic> toJson() => {
-        't': completedAtMillis,
-        'p': part,
-        'c': correct,
-        'n': total,
-        'ok': passed,
-      };
+    'completedAtMillis': completedAtMillis,
+    'part': part,
+    'correct': correct,
+    'total': total,
+    'passed': passed,
+  };
 
   static MockExamHistoryEntry? fromJson(Map<String, dynamic> m) {
-    final t = (m['t'] as num?)?.toInt();
-    final p = (m['p'] as num?)?.toInt();
-    final c = (m['c'] as num?)?.toInt();
-    final n = (m['n'] as num?)?.toInt();
-    final ok = m['ok'];
-    if (t == null || p == null || c == null || n == null || ok is! bool) return null;
+    final t = (m['completedAtMillis'] ?? m['t']) as num?;
+    final p = (m['part'] ?? m['p']) as num?;
+    final c = (m['correct'] ?? m['c']) as num?;
+    final n = (m['total'] ?? m['n']) as num?;
+    final ok = m['passed'] ?? m['ok'];
+    if (t == null || p == null || c == null || n == null || ok is! bool) {
+      return null;
+    }
     return MockExamHistoryEntry(
-      completedAtMillis: t,
-      part: p,
-      correct: c,
-      total: n,
+      completedAtMillis: t.toInt(),
+      part: p.toInt(),
+      correct: c.toInt(),
+      total: n.toInt(),
       passed: ok,
     );
   }
@@ -50,23 +53,29 @@ class MockExamHistoryEntry {
 class MockExamHistory {
   MockExamHistory._();
 
-  static const _key = 'taxi_mock_exam_history_v1';
+  static const _legacyKey = 'taxi_mock_exam_history_v1';
+  static const _legacyDedupeKey = '${_legacyKey}_last_dedupe';
   static const _maxEntries = 20;
 
+  static CollectionReference<Map<String, dynamic>> _collection(String uid) =>
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('taxi_mock_exam_history');
+
   static Future<List<MockExamHistoryEntry>> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key);
-    if (raw == null || raw.isEmpty) return [];
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return [];
+
     try {
-      final list = jsonDecode(raw) as List<dynamic>;
+      final snap = await _collection(
+        uid,
+      ).orderBy('completedAtMillis', descending: true).limit(_maxEntries).get();
       final out = <MockExamHistoryEntry>[];
-      for (final e in list) {
-        if (e is Map) {
-          final entry = MockExamHistoryEntry.fromJson(Map<String, dynamic>.from(e));
-          if (entry != null) out.add(entry);
-        }
+      for (final d in snap.docs) {
+        final entry = MockExamHistoryEntry.fromJson(d.data());
+        if (entry != null) out.add(entry);
       }
-      out.sort((a, b) => b.completedAtMillis.compareTo(a.completedAtMillis));
       return out;
     } catch (_) {
       return [];
@@ -81,24 +90,44 @@ class MockExamHistory {
     required bool passed,
     required int dedupeMillis,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final lastRaw = prefs.getString('${_key}_last_dedupe');
-    if (lastRaw == dedupeMillis.toString()) return;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
 
-    final existing = await load();
+    final existing = await _collection(
+      uid,
+    ).where('dedupeMillis', isEqualTo: dedupeMillis).limit(1).get();
+    if (existing.docs.isNotEmpty) return;
+
+    final now = DateTime.now().millisecondsSinceEpoch;
     final entry = MockExamHistoryEntry(
-      completedAtMillis: DateTime.now().millisecondsSinceEpoch,
+      completedAtMillis: now,
       part: part,
       correct: correct,
       total: total,
       passed: passed,
     );
-    final merged = [entry, ...existing];
-    if (merged.length > _maxEntries) merged.removeRange(_maxEntries, merged.length);
-    await prefs.setString(
-      _key,
-      jsonEncode(merged.map((e) => e.toJson()).toList()),
-    );
-    await prefs.setString('${_key}_last_dedupe', dedupeMillis.toString());
+
+    await _collection(uid).add({
+      ...entry.toJson(),
+      'dedupeMillis': dedupeMillis,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    // Keep only the most recent N entries in Firestore.
+    final all = await _collection(
+      uid,
+    ).orderBy('completedAtMillis', descending: true).get();
+    if (all.docs.length > _maxEntries) {
+      for (var i = _maxEntries; i < all.docs.length; i++) {
+        await all.docs[i].reference.delete();
+      }
+    }
+  }
+
+  /// Removes old local-only history from previous app versions.
+  static Future<void> clearLocalCacheForPrivacy() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_legacyKey);
+    await prefs.remove(_legacyDedupeKey);
   }
 }

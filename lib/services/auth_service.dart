@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'karta_practice_repository.dart';
+import 'lagar_practice_repository.dart';
+import 'mock_exam_history.dart';
+import 'sakerhet_practice_repository.dart';
 
 class AuthService extends ChangeNotifier {
   AuthService._();
@@ -46,6 +50,10 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    await SakerhetPracticeRepository.clearLocalCacheForPrivacy();
+    await LagarPracticeRepository.clearLocalCacheForPrivacy();
+    await KartaPracticeRepository.clearLocalCacheForPrivacy();
+    await MockExamHistory.clearLocalCacheForPrivacy();
     await _auth.signOut();
     notifyListeners();
   }
