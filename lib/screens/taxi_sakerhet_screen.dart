@@ -4,8 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../data/taxi_sakerhet_practice_sets.dart';
 import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
-import '../widgets/app_drawer.dart';
-
 class TaxiSakerhetScreen extends StatefulWidget {
   const TaxiSakerhetScreen({super.key});
 
@@ -40,14 +38,11 @@ class _TaxiSakerhetScreenState extends State<TaxiSakerhetScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      drawer: const AppDrawer(),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu_rounded, size: 24),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_rounded, size: 24, color: AppColors.primaryContainer),
+          onPressed: () => context.go('/taxi-dashboard'),
         ),
         title: Text(
           'Taxi Teori',
