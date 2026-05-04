@@ -10,8 +10,11 @@ import '../screens/taxi_karta_screen.dart';
 import '../screens/taxi_lagstiftning_screen.dart';
 import '../screens/taxi_sakerhet_screen.dart';
 import '../data/taxi_sakerhet_questions.dart';
+import '../data/taxi_sakerhet_practice_sets.dart';
+import '../models/taxi_practice_question.dart';
 import '../screens/taxi_interactive_question_screen.dart';
 import '../screens/taxi_continue_practice_screen.dart';
+import '../screens/taxi_sakerhet_continue_practice_screen.dart';
 import '../screens/taxi_review_results_screen.dart';
 
 class AppRouter {
@@ -68,9 +71,40 @@ class AppRouter {
           final module = state.uri.queryParameters['module'] ?? kTaxiModuleSakerhet;
           final set = int.tryParse(state.uri.queryParameters['set'] ?? '1') ?? 1;
           final q = int.tryParse(state.uri.queryParameters['q'] ?? '1') ?? 1;
-          final question = lookupTaxiQuestion(module: module, set: set, questionOneBased: q) ??
-              taxiSakerhetSet1.first;
-          return TaxiInteractiveQuestionScreen(question: question);
+          final practiceSetRaw = state.uri.queryParameters['practiceSet'];
+          final practiceSet = practiceSetRaw != null ? int.tryParse(practiceSetRaw) : null;
+
+          final TaxiPracticeQuestion question;
+          final int? practiceSetArg;
+
+          if (module == kTaxiModuleSakerhet &&
+              practiceSet != null &&
+              practiceSet >= 1 &&
+              practiceSet <= kSakerhetPracticeSetCount) {
+            practiceSetArg = practiceSet;
+            question = lookupSakerhetPracticeQuestion(
+                  practiceSet: practiceSet,
+                  questionOneBased: q,
+                ) ??
+                taxiQuestionFallback;
+          } else {
+            practiceSetArg = null;
+            question = lookupTaxiQuestion(module: module, set: set, questionOneBased: q) ??
+                taxiQuestionFallback;
+          }
+
+          return TaxiInteractiveQuestionScreen(
+            question: question,
+            practiceSet: practiceSetArg,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/taxi-sakerhet-continue',
+        builder: (context, state) {
+          final ps = int.tryParse(state.uri.queryParameters['practiceSet'] ?? '1') ?? 1;
+          final clamped = ps.clamp(1, kSakerhetPracticeSetCount);
+          return TaxiSakerhetContinuePracticeScreen(practiceSet: clamped);
         },
       ),
       GoRoute(
@@ -78,8 +112,12 @@ class AppRouter {
         builder: (context, state) => const TaxiContinuePracticeScreen(),
       ),
       GoRoute(
-        path: '/taxi-review-results',
-        builder: (context, state) => const TaxiReviewResultsScreen(),
+        path: '/taxi-sakerhet-review',
+        builder: (context, state) {
+          final ps = int.tryParse(state.uri.queryParameters['practiceSet'] ?? '1') ?? 1;
+          final clamped = ps.clamp(1, kSakerhetPracticeSetCount);
+          return TaxiReviewResultsScreen(practiceSet: clamped);
+        },
       ),
     ],
   );

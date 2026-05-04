@@ -64,4 +64,31 @@ class TaxiPracticeQuestion {
     if (t != null && t.isNotEmpty) return true;
     return explanationImageAssetPaths.isNotEmpty || explanationImageUrls.isNotEmpty;
   }
+
+  /// Session display (e.g. Säkerhet split into 4 practice sets). Keeps bank `id` / media intact.
+  TaxiPracticeQuestion copyWith({
+    int? setNumber,
+    int? questionNumber,
+    int? totalInSet,
+    String? categoryTag,
+  }) {
+    return TaxiPracticeQuestion(
+      id: id,
+      moduleId: moduleId,
+      setNumber: setNumber ?? this.setNumber,
+      questionNumber: questionNumber ?? this.questionNumber,
+      totalInSet: totalInSet ?? this.totalInSet,
+      categoryTag: categoryTag ?? this.categoryTag,
+      prompt: prompt,
+      options: options,
+      correctOptionIndex: correctOptionIndex,
+      explanationText: explanationText,
+      explanationImageAssetPaths: explanationImageAssetPaths,
+      explanationImageUrls: explanationImageUrls,
+      imageAssetPath: imageAssetPath,
+      imageNetworkUrl: imageNetworkUrl,
+      imageSemanticLabel: imageSemanticLabel,
+      designIllustrationPrompt: designIllustrationPrompt,
+    );
+  }
 }

@@ -1,21 +1,46 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../data/taxi_sakerhet_practice_sets.dart';
+import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
-import 'dart:math';
 
+/// Results for a finished **Säkerhet** practice set (Set 1–4).
 class TaxiReviewResultsScreen extends StatelessWidget {
-  const TaxiReviewResultsScreen({super.key});
+  const TaxiReviewResultsScreen({super.key, required this.practiceSet});
+
+  final int practiceSet;
 
   @override
   Widget build(BuildContext context) {
+    final partition = sakerhetPracticeQuestions(practiceSet);
+    final total = partition.length;
+    final progress = SakerhetPracticeRepository.instance.load(practiceSet);
+    final correctById = {for (final q in partition) q.id: q.correctOptionIndex};
+    final correct = progress?.correctCount(correctById) ?? 0;
+    final answered = progress?.answers.length ?? 0;
+    final incorrect = (answered - correct).clamp(0, total);
+    final pct = total > 0 ? (correct / total).clamp(0.0, 1.0) : 0.0;
+    final pctLabel = '${(pct * 100).round()}%';
+    final completed = progress?.completed == true;
+    final passed = pct >= 0.65;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: AppColors.cardBackground,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 64,
+        shape: Border(
+          bottom: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.menu_rounded, size: 24),
-          onPressed: () {},
+          icon: Icon(Icons.arrow_back_rounded, size: 24, color: AppColors.primaryContainer),
+          onPressed: () => context.go('/taxi-sakerhet'),
         ),
         title: Text(
           'Taxi Teori',
@@ -28,232 +53,144 @@ class TaxiReviewResultsScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_circle_outlined, size: 26),
+            icon: Icon(Icons.account_circle_outlined, size: 26, color: AppColors.primaryContainer),
             onPressed: () {},
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
-              Text(
-                'Set 1 Results',
-                style: GoogleFonts.publicSans(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.onBackground,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Your performance overview for the latest practice set.',
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  color: AppColors.onSurfaceVariant,
-                  height: 1.4,
-                ),
-              ),
               const SizedBox(height: 24),
-              // Overall Score Circular Chart
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.outlineVariant, width: 0.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    )
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      'Overall Score',
-                      style: GoogleFonts.publicSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.onBackground,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: 140,
-                      height: 140,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CustomPaint(
-                            size: const Size(140, 140),
-                            painter: _ScorePainter(percentage: 0.92),
-                          ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '92',
-                                    style: GoogleFonts.publicSans(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primary,
-                                      height: 1.0,
-                                    ),
-                                  ),
-                                  Text(
-                                    '%',
-                                    style: GoogleFonts.publicSans(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primary,
-                                      height: 1.2,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'PASSED',
-                                style: GoogleFonts.inter(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.onSurfaceVariant,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Correct / Incorrect / Time Spent Stats
-              _buildStatCard(
-                icon: Icons.check_circle_outline_rounded,
-                iconColor: AppColors.primary,
-                iconBgColor: AppColors.primaryLight.withValues(alpha: 0.3),
-                title: 'Correct',
-                value: '69/75',
-              ),
-              const SizedBox(height: 12),
-              _buildStatCard(
-                icon: Icons.cancel_outlined,
-                iconColor: AppColors.error,
-                iconBgColor: AppColors.errorContainer,
-                title: 'Incorrect',
-                value: '6/75',
-              ),
-              const SizedBox(height: 12),
-              _buildTimeStatCard(
-                icon: Icons.timer_outlined,
-                title: 'Time Spent',
-                value: '18m 42s',
-                subtitle: 'Average pace: 15s per question.',
-              ),
-              const SizedBox(height: 32),
+              // --- Header ---
               Text(
-                'Categorized Performance',
+                'Set $practiceSet resultat',
                 style: GoogleFonts.publicSans(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.onBackground,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
+                  height: 40 / 32,
+                  letterSpacing: -0.64,
+                  color: AppColors.onSurface,
                 ),
               ),
-              const SizedBox(height: 16),
-              _buildCategoryProgress(
-                icon: Icons.person_outline_rounded,
-                title: 'Passenger Safety',
-                percentage: 1.0,
-                percentText: '100%',
+              const SizedBox(height: 4),
+              Text(
+                completed
+                    ? 'Din resultatöversikt för detta övningspaket.'
+                    : 'Ofullständig övning — $answered av $total besvarade.',
+                style: GoogleFonts.inter(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  height: 28 / 18,
+                  color: AppColors.onSurfaceVariant,
+                ),
               ),
-              const SizedBox(height: 12),
-              _buildCategoryProgress(
-                icon: Icons.medical_services_outlined,
-                title: 'Emergency Procedures',
-                percentage: 0.85,
-                percentText: '85%',
-              ),
-              const SizedBox(height: 12),
-              _buildCategoryProgress(
-                icon: Icons.work_outline_rounded,
-                title: 'Driver Conduct',
-                percentage: 0.90,
-                percentText: '90%',
-              ),
-              const SizedBox(height: 32),
-              // Buttons
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.onSurfaceVariant,
-                    side: const BorderSide(color: AppColors.outlineVariant),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 40),
+
+              if (total == 0)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Text(
+                      'Inga frågor i detta set ännu.',
+                      style: GoogleFonts.inter(fontSize: 16, color: AppColors.onSurfaceVariant),
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.refresh_rounded, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Retake Set',
-                        style: GoogleFonts.publicSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
+                )
+              else ...[
+                // --- Overall Score Card ---
+                _overallScoreCard(pct, pctLabel, passed),
+                const SizedBox(height: 16),
+
+                // --- Correct / Incorrect row ---
+                Row(
+                  children: [
+                    Expanded(
+                      child: _statCard(
+                        icon: Icons.check_circle_rounded,
+                        iconBg: AppColors.primaryLight,
+                        iconColor: AppColors.primary,
+                        label: 'Rätt',
+                        value: '$correct/$total',
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.fact_check_outlined, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Review All Questions',
-                        style: GoogleFonts.publicSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _statCard(
+                        icon: Icons.cancel_rounded,
+                        iconBg: AppColors.errorContainer,
+                        iconColor: AppColors.error,
+                        label: 'Fel',
+                        value: '$incorrect/$total',
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
+
+                // --- Action Buttons ---
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      await SakerhetPracticeRepository.instance.clear(practiceSet);
+                      if (!context.mounted) return;
+                      context.go('/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=1');
+                    },
+                    icon: const Icon(Icons.refresh_rounded, size: 20),
+                    label: Text(
+                      'Gör om set',
+                      style: GoogleFonts.publicSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        height: 20 / 14,
+                        letterSpacing: 0.28,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.onSurface,
+                      side: const BorderSide(color: AppColors.outline),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      context.push('/taxi-sakerhet-continue?practiceSet=$practiceSet');
+                    },
+                    icon: const Icon(Icons.fact_check_rounded, size: 20),
+                    label: Text(
+                      'Granska alla frågor',
+                      style: GoogleFonts.publicSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        height: 20 / 14,
+                        letterSpacing: 0.28,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                      shadowColor: Colors.black.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 40),
             ],
           ),
@@ -263,174 +200,141 @@ class TaxiReviewResultsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard({
+  // ---------------------------------------------------------------------------
+  // Overall Score — circular ring card
+  // ---------------------------------------------------------------------------
+  Widget _overallScoreCard(double pct, String pctLabel, bool passed) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.surfaceVariant),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Totalpoäng',
+            style: GoogleFonts.publicSans(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              height: 28 / 20,
+              color: AppColors.onSurface,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: 192,
+            height: 192,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomPaint(
+                  size: const Size(192, 192),
+                  painter: _ScoreRingPainter(percentage: pct),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      pctLabel,
+                      style: GoogleFonts.publicSans(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w700,
+                        height: 40 / 32,
+                        letterSpacing: -0.64,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      passed ? 'GODKÄNT' : 'EJ GODKÄNT',
+                      style: GoogleFonts.publicSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        height: 16 / 12,
+                        letterSpacing: 1.5,
+                        color: AppColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Stat card — icon circle + label + big number
+  // ---------------------------------------------------------------------------
+  Widget _statCard({
     required IconData icon,
+    required Color iconBg,
     required Color iconColor,
-    required Color iconBgColor,
-    required String title,
+    required String label,
     required String value,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant, width: 0.5),
+        border: Border.all(color: AppColors.surfaceVariant),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 5,
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 4,
             offset: const Offset(0, 2),
-          )
+          ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
-              color: iconBgColor,
+              color: iconBg,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 20),
+            child: Icon(icon, color: iconColor, size: 24),
           ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: GoogleFonts.inter(fontSize: 11, color: AppColors.onSurfaceVariant),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: GoogleFonts.publicSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.onBackground,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimeStatCard({
-    required IconData icon,
-    required String title,
-    required String value,
-    required String subtitle,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant, width: 0.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(icon, size: 18, color: AppColors.onSurfaceVariant),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: GoogleFonts.inter(fontSize: 11, color: AppColors.onSurfaceVariant),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: GoogleFonts.publicSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.onBackground,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              color: AppColors.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryProgress({
-    required IconData icon,
-    required String title,
-    required double percentage,
-    required String percentText,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant, width: 0.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          )
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, size: 16, color: AppColors.onSurfaceVariant),
-                  const SizedBox(width: 8),
-                  Text(
-                    title,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.onBackground,
-                    ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: GoogleFonts.publicSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    height: 16 / 12,
+                    color: AppColors.onSurfaceVariant,
                   ),
-                ],
-              ),
-              Text(
-                percentText,
-                style: GoogleFonts.publicSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.onBackground,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: percentage,
-              backgroundColor: AppColors.surfaceContainerHigh,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-              minHeight: 6,
+                Text(
+                  value,
+                  style: GoogleFonts.publicSans(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    height: 32 / 24,
+                    letterSpacing: -0.24,
+                    color: AppColors.onSurface,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -438,28 +342,32 @@ class TaxiReviewResultsScreen extends StatelessWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Bottom nav
+  // ---------------------------------------------------------------------------
   Widget _buildBottomNav(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground.withValues(alpha: 0.95),
+        border: const Border(top: BorderSide(color: AppColors.surfaceVariant, width: 1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, -4),
           ),
         ],
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(context, Icons.dashboard_rounded, 'Hem', 0, '/taxi-dashboard'),
-              _buildNavItem(context, Icons.map_rounded, 'Karta', 1, '/taxi-karta'),
-              _buildNavItem(context, Icons.shield_outlined, 'Säkerhet', 2, '/taxi-sakerhet'),
-              _buildNavItem(context, Icons.gavel_rounded, 'Lagar', 3, '/taxi-lagstiftning'),
+              _nav(context, Icons.home_rounded, 'Hem', 0, '/taxi-dashboard'),
+              _nav(context, Icons.map_outlined, 'Karta', 1, '/taxi-karta'),
+              _nav(context, Icons.security_outlined, 'Säkerhet', 2, '/taxi-sakerhet'),
+              _nav(context, Icons.gavel_outlined, 'Lagar', 3, '/taxi-lagstiftning'),
             ],
           ),
         ),
@@ -467,55 +375,59 @@ class TaxiReviewResultsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, IconData icon, String label, int index, String route) {
+  Widget _nav(BuildContext context, IconData icon, String label, int index, String route) {
     final isSelected = index == 2;
-    return GestureDetector(
-      onTap: () => context.go(route),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: isSelected
-            ? BoxDecoration(
-                color: AppColors.primaryLight.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-              )
-            : null,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 24, color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: GoogleFonts.publicSans(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => context.go(route),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 24,
+                color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant,
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: GoogleFonts.publicSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _ScorePainter extends CustomPainter {
-  final double percentage;
+// -----------------------------------------------------------------------------
+// Circular score ring painter
+// -----------------------------------------------------------------------------
+class _ScoreRingPainter extends CustomPainter {
+  _ScoreRingPainter({required this.percentage});
 
-  _ScorePainter({required this.percentage});
+  final double percentage;
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 8;
-    
-    // Background circle
+    final radius = size.width / 2 - 12;
+
     final bgPaint = Paint()
-      ..color = AppColors.surfaceContainerHigh
+      ..color = AppColors.surfaceVariant
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12
       ..strokeCap = StrokeCap.round;
-      
+
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -pi / 2,
@@ -523,14 +435,13 @@ class _ScorePainter extends CustomPainter {
       false,
       bgPaint,
     );
-    
-    // Foreground progress
+
     final fgPaint = Paint()
       ..color = AppColors.primary
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12
       ..strokeCap = StrokeCap.round;
-      
+
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -pi / 2,
@@ -541,5 +452,5 @@ class _ScorePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _ScoreRingPainter old) => old.percentage != percentage;
 }

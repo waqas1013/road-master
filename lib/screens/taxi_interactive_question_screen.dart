@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../data/taxi_sakerhet_practice_sets.dart';
 import '../data/taxi_sakerhet_questions.dart';
 import '../models/taxi_practice_question.dart';
+import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
 import '../widgets/taxi_option_step_text.dart';
 
@@ -12,11 +16,14 @@ class TaxiInteractiveQuestionScreen extends StatefulWidget {
     super.key,
     required this.question,
     this.bottomNavActiveIndex = 2,
+    /// When set, flow uses [lookupSakerhetPracticeQuestion] and persists progress (Set 1–4).
+    this.practiceSet,
   });
 
   final TaxiPracticeQuestion question;
   /// Hem=0, Karta=1, Säkerhet=2, Lagar=3
   final int bottomNavActiveIndex;
+  final int? practiceSet;
 
   @override
   State<TaxiInteractiveQuestionScreen> createState() => _TaxiInteractiveQuestionScreenState();
@@ -26,8 +33,83 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
   int _selectedOption = -1;
   bool _checked = false;
   bool _explanationExpanded = false;
+  bool _bookmarked = false;
 
   TaxiPracticeQuestion get q => widget.question;
+  bool get _isLastQuestion => q.questionNumber >= q.totalInSet;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final ps = widget.practiceSet;
+      if (ps != null) {
+        await SakerhetPracticeRepository.instance.setResumeQuestion(ps, widget.question.questionNumber);
+      }
+      if (!mounted) return;
+      if (ps != null) {
+        final saved = SakerhetPracticeRepository.instance.load(ps)?.answers[q.id];
+        final marked = SakerhetPracticeRepository.instance.isBookmarked(ps, q.id);
+        if (saved != null) {
+          setState(() {
+            _selectedOption = saved;
+            _checked = true;
+            if (q.hasExplanationContent) {
+              _explanationExpanded = true;
+            }
+            _bookmarked = marked;
+          });
+        } else {
+          setState(() => _bookmarked = marked);
+        }
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant TaxiInteractiveQuestionScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.question.id != widget.question.id || oldWidget.practiceSet != widget.practiceSet) {
+      final ps = widget.practiceSet;
+      if (ps == null) {
+        setState(() {
+          _bookmarked = false;
+          _selectedOption = -1;
+          _checked = false;
+          _explanationExpanded = false;
+        });
+        return;
+      }
+      final saved = SakerhetPracticeRepository.instance.load(ps)?.answers[q.id];
+      final marked = SakerhetPracticeRepository.instance.isBookmarked(ps, q.id);
+      setState(() {
+        _bookmarked = marked;
+        if (saved != null) {
+          _selectedOption = saved;
+          _checked = true;
+          _explanationExpanded = q.hasExplanationContent;
+        } else {
+          _selectedOption = -1;
+          _checked = false;
+          _explanationExpanded = false;
+        }
+      });
+    }
+  }
+
+  Future<void> _toggleBookmark() async {
+    final ps = widget.practiceSet;
+    if (ps == null) return;
+    await SakerhetPracticeRepository.instance.toggleBookmark(
+      practiceSet: ps,
+      questionId: q.id,
+    );
+    if (!mounted) return;
+    setState(() {
+      _bookmarked = SakerhetPracticeRepository.instance.isBookmarked(ps, q.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +138,16 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Icon(Icons.bookmark_border_rounded, size: 24, color: AppColors.primaryContainer),
-            onPressed: () {},
-          ),
+          if (widget.practiceSet != null)
+            IconButton(
+              tooltip: _bookmarked ? 'Ta bort sparad' : 'Spara fråga',
+              icon: Icon(
+                _bookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                size: 24,
+                color: AppColors.primaryContainer,
+              ),
+              onPressed: _toggleBookmark,
+            ),
         ],
       ),
       body: Column(
@@ -153,16 +241,25 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: _selectedOption == -1 || _checked
-                            ? null
-                            : () {
-                                setState(() {
-                                  _checked = true;
-                                  if (q.hasExplanationContent) {
-                                    _explanationExpanded = true;
-                                  }
-                                });
-                              },
+                      onPressed: _selectedOption == -1 || _checked
+                          ? null
+                          : () async {
+                              setState(() {
+                                _checked = true;
+                                if (q.hasExplanationContent) {
+                                  _explanationExpanded = true;
+                                }
+                              });
+                              final ps = widget.practiceSet;
+                              if (ps != null) {
+                                await SakerhetPracticeRepository.instance.recordAnswer(
+                                  practiceSet: ps,
+                                  questionId: q.id,
+                                  selectedIndex: _selectedOption,
+                                  currentQuestionIndex: q.questionNumber,
+                                );
+                              }
+                            },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           disabledBackgroundColor: AppColors.surfaceContainerHigh,
@@ -267,10 +364,28 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => context.pop(),
+                      onPressed: q.questionNumber <= 1
+                          ? null
+                          : () {
+                              if (widget.practiceSet != null) {
+                                final ps = widget.practiceSet!;
+                                final prev = q.questionNumber - 1;
+                                unawaited(SakerhetPracticeRepository.instance.setResumeQuestion(ps, prev));
+                                context.pushReplacement(
+                                  '/taxi-question?module=sakerhet&practiceSet=$ps&q=$prev',
+                                );
+                              } else {
+                                context.pop();
+                              }
+                            },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.primary,
-                        side: const BorderSide(color: AppColors.primary),
+                        disabledForegroundColor: AppColors.outline,
+                        side: BorderSide(
+                          color: q.questionNumber <= 1
+                              ? AppColors.outlineVariant.withValues(alpha: 0.5)
+                              : AppColors.primary,
+                        ),
                         backgroundColor: AppColors.cardBackground,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -310,14 +425,19 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Nästa',
+                            _isLastQuestion ? 'Visa resultat' : 'Nästa',
                             style: GoogleFonts.publicSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Icon(Icons.chevron_right_rounded, size: 20),
+                          Icon(
+                            _isLastQuestion
+                                ? Icons.check_circle_outline_rounded
+                                : Icons.chevron_right_rounded,
+                            size: 20,
+                          ),
                         ],
                       ),
                     ),
@@ -409,7 +529,44 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
     );
   }
 
-  void _onNext() {
+  Future<void> _onNext() async {
+    if (widget.practiceSet != null) {
+      final ps = widget.practiceSet!;
+      final total = q.totalInSet;
+      final nextNum = q.questionNumber + 1;
+
+      // Save selection even without "Kontrollera svar" so grid + reopen show rätt/fel and choice.
+      if (_selectedOption >= 0) {
+        await SakerhetPracticeRepository.instance.recordAnswer(
+          practiceSet: ps,
+          questionId: q.id,
+          selectedIndex: _selectedOption,
+          currentQuestionIndex: q.questionNumber,
+        );
+      }
+
+      await SakerhetPracticeRepository.instance.advanceAfterNext(
+        practiceSet: ps,
+        nextQuestionOneBased: nextNum,
+        totalInSet: total,
+      );
+
+      if (!mounted) return;
+
+      if (nextNum > total) {
+        context.go('/taxi-sakerhet-review?practiceSet=$ps');
+        return;
+      }
+
+      final nextQ = lookupSakerhetPracticeQuestion(practiceSet: ps, questionOneBased: nextNum);
+      if (nextQ != null) {
+        context.pushReplacement(
+          '/taxi-question?module=sakerhet&practiceSet=$ps&q=$nextNum',
+        );
+      }
+      return;
+    }
+
     final next = q.questionNumber + 1;
     final nextQ = lookupTaxiQuestion(
       module: q.moduleId,

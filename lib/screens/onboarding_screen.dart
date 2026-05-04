@@ -11,11 +11,11 @@ class OnboardingScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
               // App logo / branding
               Container(
                 width: 64,
@@ -39,10 +39,10 @@ class OnboardingScreen extends StatelessWidget {
                   color: AppColors.primary,
                 ),
               ),
-              const Spacer(flex: 1),
+              const SizedBox(height: 24),
               // Hero illustration
               Container(
-                height: 280,
+                height: 220,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
@@ -124,7 +124,7 @@ class OnboardingScreen extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-              const Spacer(flex: 2),
+              const SizedBox(height: 32),
               // Primary CTA
               SizedBox(
                 width: double.infinity,

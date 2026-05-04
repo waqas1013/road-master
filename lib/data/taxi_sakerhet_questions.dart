@@ -1,4 +1,5 @@
 import '../models/taxi_practice_question.dart';
+import 'taxi_question_bank.dart';
 
 /// Questions per säkerhet practice set (matches UI copy on [TaxiSakerhetScreen]).
 const int taxiSakerhetQuestionsPerSet = 75;
@@ -41,11 +42,18 @@ final List<TaxiPracticeQuestion> taxiSakerhetSet1 = [
   ),
 ];
 
-/// Resolve a question for deep links / router.
+/// Resolve a question for deep links / router. **JSON bank** (`assets/taxi/bank/questions.json`) wins;
+/// otherwise falls back to embedded [taxiSakerhetSet1] for säkerhet until the bank is fully populated.
 TaxiPracticeQuestion? lookupSakerhetQuestion({required int set, required int questionOneBased}) {
   if (questionOneBased < 1) return null;
+  final fromBank = TaxiQuestionBank.instance.lookup(
+    module: kTaxiModuleSakerhet,
+    set: set,
+    questionOneBased: questionOneBased,
+  );
+  if (fromBank != null) return fromBank;
+
   if (set == 1) {
-    // Only Q1 is implemented; extend list for more.
     if (questionOneBased == 1) return taxiSakerhetSet1.first;
   }
   return null;
@@ -56,8 +64,19 @@ TaxiPracticeQuestion? lookupTaxiQuestion({
   required int set,
   required int questionOneBased,
 }) {
+  final fromBank = TaxiQuestionBank.instance.lookup(
+    module: module,
+    set: set,
+    questionOneBased: questionOneBased,
+  );
+  if (fromBank != null) return fromBank;
+
   if (module == kTaxiModuleSakerhet) {
     return lookupSakerhetQuestion(set: set, questionOneBased: questionOneBased);
   }
   return null;
 }
+
+/// Router / screens: prefer bank, then first embedded säkerhet item.
+TaxiPracticeQuestion get taxiQuestionFallback =>
+    TaxiQuestionBank.instance.firstQuestion ?? taxiSakerhetSet1.first;

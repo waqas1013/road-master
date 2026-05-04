@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'data/taxi_question_bank.dart';
 import 'router/app_router.dart';
+import 'services/sakerhet_practice_repository.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await TaxiQuestionBank.instance.load();
+  await SakerhetPracticeRepository.init();
   runApp(
     const ProviderScope(
       child: RoadMasterApp(),
