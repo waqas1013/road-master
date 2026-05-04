@@ -2,6 +2,14 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
+/// Copy this file to [firebase_options.dart] and fill in values from
+/// Firebase Console → Project settings → Your apps, or run:
+///
+///   dart pub global activate flutterfire_cli
+///   flutterfire configure
+///
+/// The generated [firebase_options.dart] is gitignored (API keys must not be
+/// committed to public repositories).
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -21,19 +29,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCFyc0CKb83ouLPTFLKA5bcmoWVgJlQrDw',
-    appId: '1:685054591368:android:512ff59755b5fa4bc5ba3d',
-    messagingSenderId: '685054591368',
-    projectId: 'road-master-se',
-    storageBucket: 'road-master-se.firebasestorage.app',
+    apiKey: 'YOUR_ANDROID_API_KEY',
+    appId: 'YOUR_ANDROID_APP_ID',
+    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+    projectId: 'YOUR_PROJECT_ID',
+    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBR5QMDUFdvtHmvBFO4aznKd1PySWoubCc',
-    appId: '1:685054591368:ios:541acc7fc008cffcc5ba3d',
-    messagingSenderId: '685054591368',
-    projectId: 'road-master-se',
-    storageBucket: 'road-master-se.firebasestorage.app',
+    apiKey: 'YOUR_IOS_API_KEY',
+    appId: 'YOUR_IOS_APP_ID',
+    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+    projectId: 'YOUR_PROJECT_ID',
+    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
     iosBundleId: 'com.roadmaster.roadMaster',
   );
 }
