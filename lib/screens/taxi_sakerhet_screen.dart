@@ -56,12 +56,6 @@ class _TaxiSakerhetScreenState extends State<TaxiSakerhetScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined, size: 26),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

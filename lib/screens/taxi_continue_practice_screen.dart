@@ -27,21 +27,6 @@ class TaxiContinuePracticeScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.surfaceContainerHigh,
-              border: Border.all(color: AppColors.outlineVariant),
-            ),
-            child: const Center(
-              child: Text('UP', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

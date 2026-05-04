@@ -338,7 +338,7 @@ class TaxiStatisticsScreen extends StatelessWidget {
                       barColor: const Color(0xFF4E6DFF),
                     ),
                     _CategoryTile(
-                      title: 'Karta &\nRuttplanering',
+                      title: 'Karta',
                       icon: Icons.map_rounded,
                       iconColor: const Color(0xFF2B8A3E),
                       iconBg: const Color(0xFFE2F6E8),

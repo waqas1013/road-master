@@ -283,7 +283,7 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
                     onTap: () => context.push('/taxi-sakerhet'),
                   ),
                   _CategoryTile(
-                    title: 'Karta & Ruttplanering',
+                    title: 'Karta',
                     progress: kartaP,
                     icon: Icons.map_rounded,
                     bento: TaxiHemBentoStyle.karta,

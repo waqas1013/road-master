@@ -56,12 +56,6 @@ class _TaxiLagstiftningScreenState extends State<TaxiLagstiftningScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined, size: 26),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -71,7 +65,7 @@ class _TaxiLagstiftningScreenState extends State<TaxiLagstiftningScreen> {
             children: [
               const SizedBox(height: 12),
               Text(
-                'Lagar & Lagstiftning',
+                'Lagstiftning',
                 style: GoogleFonts.publicSans(
                   fontSize: 32,
                   fontWeight: FontWeight.w700,

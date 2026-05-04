@@ -56,12 +56,6 @@ class _TaxiKartaScreenState extends State<TaxiKartaScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined, size: 26),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -71,7 +65,7 @@ class _TaxiKartaScreenState extends State<TaxiKartaScreen> {
             children: [
               const SizedBox(height: 12),
               Text(
-                'Karta & Lokalkännedom',
+                'Karta',
                 style: GoogleFonts.publicSans(
                   fontSize: 32,
                   fontWeight: FontWeight.w700,

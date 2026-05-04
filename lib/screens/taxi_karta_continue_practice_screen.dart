@@ -185,13 +185,6 @@ class _TaxiKartaContinuePracticeScreenState extends State<TaxiKartaContinuePract
               ),
             ),
             centerTitle: true,
-            actions: [
-              IconButton(
-                icon: Icon(Icons.account_circle_outlined, size: 26, color: AppColors.primaryContainer),
-                onPressed: () {},
-              ),
-              const SizedBox(width: 4),
-            ],
           ),
           body: SingleChildScrollView(
             child: Padding(
