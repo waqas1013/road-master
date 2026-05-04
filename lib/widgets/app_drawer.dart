@@ -81,11 +81,11 @@ class AppDrawer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 12),
               children: [
                 _buildMenuItem(
-                  icon: Icons.swap_horiz_rounded,
-                  title: 'Byt utbildning (B / Taxi)',
+                  icon: Icons.query_stats_rounded,
+                  title: 'Min statistik',
                   onTap: () {
                     Navigator.pop(context);
-                    context.push('/category-selection');
+                    context.push('/taxi-statistik');
                   },
                 ),
                 _buildMenuItem(

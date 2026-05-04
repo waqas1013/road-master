@@ -28,6 +28,10 @@ import '../screens/taxi_review_results_screen.dart';
 import '../screens/taxi_lagar_review_results_screen.dart';
 import '../screens/taxi_karta_review_results_screen.dart';
 import '../screens/taxi_mock_exams_screen.dart';
+import '../screens/taxi_mock_exam_question_screen.dart';
+import '../screens/taxi_mock_exam_results_screen.dart';
+import '../screens/taxi_mock_exam_review_screen.dart';
+import '../screens/taxi_statistics_screen.dart';
 
 /// Routes that don't require authentication (browsing allowed).
 const _publicPaths = {
@@ -41,6 +45,11 @@ const _publicPaths = {
   '/taxi-lagstiftning',
   '/taxi-karta',
   '/dashboard',
+  '/taxi-mock-exams',
+  '/taxi-mock-exam',
+  '/taxi-mock-exam-results',
+  '/taxi-mock-exam-review',
+  '/taxi-statistik',
 };
 
 TaxiInteractiveQuestionScreen _taxiQuestionScreenFromState(GoRouterState state) {
@@ -89,13 +98,9 @@ TaxiInteractiveQuestionScreen _taxiQuestionScreenFromState(GoRouterState state) 
         taxiQuestionFallback;
   }
 
-  final navIndex =
-      module == kTaxiModuleLagstiftning ? 3 : module == kTaxiModuleKarta ? 1 : 2;
-
   return TaxiInteractiveQuestionScreen(
     question: question,
     practiceSet: practiceSetArg,
-    bottomNavActiveIndex: navIndex,
   );
 }
 
@@ -248,6 +253,25 @@ class AppRouter {
       GoRoute(
         path: '/taxi-mock-exams',
         builder: (context, state) => const TaxiMockExamsScreen(),
+      ),
+      GoRoute(
+        path: '/taxi-mock-exam',
+        builder: (context, state) {
+          final part = int.tryParse(state.uri.queryParameters['part'] ?? '1') ?? 1;
+          return TaxiMockExamQuestionScreen(part: part);
+        },
+      ),
+      GoRoute(
+        path: '/taxi-mock-exam-results',
+        builder: (context, state) => const TaxiMockExamResultsScreen(),
+      ),
+      GoRoute(
+        path: '/taxi-mock-exam-review',
+        builder: (context, state) => const TaxiMockExamReviewScreen(),
+      ),
+      GoRoute(
+        path: '/taxi-statistik',
+        builder: (context, state) => const TaxiStatisticsScreen(),
       ),
     ],
   );

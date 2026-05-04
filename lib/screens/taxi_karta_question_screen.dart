@@ -9,7 +9,6 @@ class TaxiKartaQuestionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return TaxiInteractiveQuestionScreen(
       question: taxiKartaPlaceholderQuestion,
-      bottomNavActiveIndex: 1,
     );
   }
 }

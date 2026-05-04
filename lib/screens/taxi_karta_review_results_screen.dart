@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../data/taxi_karta_practice_sets.dart';
 import '../services/karta_practice_repository.dart';
 import '../theme/app_colors.dart';
+import '../widgets/taxi_shell_bottom_nav.dart';
 import '../router/taxi_question_transition.dart';
 
 class TaxiKartaReviewResultsScreen extends StatelessWidget {
@@ -197,7 +198,7 @@ class TaxiKartaReviewResultsScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: const TaxiShellBottomNav(),
     );
   }
 
@@ -336,70 +337,8 @@ class TaxiKartaReviewResultsScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground.withValues(alpha: 0.95),
-        border: const Border(top: BorderSide(color: AppColors.surfaceVariant, width: 1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _nav(context, Icons.home_rounded, 'Hem', 0, '/taxi-dashboard'),
-              _nav(context, Icons.map_outlined, 'Karta', 1, '/taxi-karta'),
-              _nav(context, Icons.security_outlined, 'Säkerhet', 2, '/taxi-sakerhet'),
-              _nav(context, Icons.gavel_outlined, 'Lagar', 3, '/taxi-lagstiftning'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _nav(BuildContext context, IconData icon, String label, int index, String route) {
-    final isSelected = index == 1;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => context.go(route),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 24,
-                color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: GoogleFonts.publicSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
+
 
 class _ScoreRingPainter extends CustomPainter {
   _ScoreRingPainter({required this.percentage});

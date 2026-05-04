@@ -2,6 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
+import '../services/taxi_entitlement_service.dart';
+import '../widgets/taxi_shell_bottom_nav.dart';
+
+Future<void> tryStartTaxiSlutprov(BuildContext context, int part) async {
+  final svc = TaxiEntitlementService.instance;
+  if (!svc.isLoggedIn) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Logga in för att starta slutprov.')),
+    );
+    await context.push('/login');
+    return;
+  }
+  if (!await svc.hasActiveTaxiSubscription()) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Du behöver en aktiv prenumeration för att starta slutprov. Köp tillgång på vår webbplats.',
+        ),
+      ),
+    );
+    return;
+  }
+  if (!context.mounted) return;
+  await context.push('/taxi-mock-exam?part=$part');
+}
 
 /// Stitch screen: **Mock Exams - Dynamic Question Bank Info**.
 class TaxiMockExamsScreen extends StatelessWidget {
@@ -27,7 +53,13 @@ class TaxiMockExamsScreen extends StatelessWidget {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, size: 24, color: AppColors.primaryContainer),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/taxi-dashboard');
+            }
+          },
         ),
         title: Text(
           'Mock Exams',
@@ -84,7 +116,7 @@ class TaxiMockExamsScreen extends StatelessWidget {
                   'Bemötande',
                   'Fordonskännedom',
                 ],
-                onStart: () {},
+                onStart: () => tryStartTaxiSlutprov(context, 1),
               ),
               const SizedBox(height: 16),
               _DelprovCard(
@@ -99,116 +131,14 @@ class TaxiMockExamsScreen extends StatelessWidget {
                   'Trafikregler',
                   'Vägmärken',
                 ],
-                onStart: () {},
+                onStart: () => tryStartTaxiSlutprov(context, 2),
               ),
               const SizedBox(height: 32),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
-    );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground.withValues(alpha: 0.95),
-        border: const Border(
-          top: BorderSide(color: AppColors.surfaceVariant, width: 1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _navItem(
-                context,
-                icon: Icons.home_rounded,
-                label: 'Hem',
-                isSelected: false,
-                route: '/taxi-dashboard',
-              ),
-              _navItem(
-                context,
-                icon: Icons.map_outlined,
-                label: 'Karta',
-                isSelected: false,
-                route: '/taxi-karta',
-              ),
-              _navItem(
-                context,
-                icon: Icons.verified_user_outlined,
-                label: 'Säkerhet',
-                isSelected: false,
-                route: '/taxi-sakerhet',
-              ),
-              _navItem(
-                context,
-                icon: Icons.gavel_outlined,
-                label: 'Lagar',
-                isSelected: true,
-                route: '/taxi-lagstiftning',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _navItem(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required bool isSelected,
-    required String route,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          if (!isSelected) context.go(route);
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          constraints: const BoxConstraints(minWidth: 64),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryLight : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 24, color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.publicSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  height: 16 / 12,
-                  color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: const TaxiShellBottomNav(selectedRoute: '/taxi-mock-exams'),
     );
   }
 }

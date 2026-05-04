@@ -17,20 +17,18 @@ import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
 import '../widgets/taxi_bank_image.dart';
 import '../widgets/taxi_option_step_text.dart';
+import '../widgets/taxi_shell_bottom_nav.dart';
 
 /// Interactive practice question — layout aligned with Stitch **Interactive Practice Question v2**.
 class TaxiInteractiveQuestionScreen extends StatefulWidget {
   const TaxiInteractiveQuestionScreen({
     super.key,
     required this.question,
-    this.bottomNavActiveIndex = 2,
     /// When set, flow uses [lookupSakerhetPracticeQuestion] and persists progress (Set 1–4).
     this.practiceSet,
   });
 
   final TaxiPracticeQuestion question;
-  /// Hem=0, Karta=1, Säkerhet=2, Lagar=3
-  final int bottomNavActiveIndex;
   final int? practiceSet;
 
   @override
@@ -558,7 +556,7 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: const TaxiShellBottomNav(),
     );
   }
 
@@ -787,71 +785,6 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
                 color: optionTextColor,
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground.withValues(alpha: 0.95),
-        border: const Border(
-          top: BorderSide(color: AppColors.surfaceVariant, width: 1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(context, Icons.home_rounded, 'Hem', 0, '/taxi-dashboard'),
-              _buildNavItem(context, Icons.map_outlined, 'Karta', 1, '/taxi-karta'),
-              _buildNavItem(context, Icons.security_outlined, 'Säkerhet', 2, '/taxi-sakerhet'),
-              _buildNavItem(context, Icons.gavel_outlined, 'Lagar', 3, '/taxi-lagstiftning'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(BuildContext context, IconData icon, String label, int index, String route) {
-    final isSelected = index == widget.bottomNavActiveIndex;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => context.go(route),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 24,
-                color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: GoogleFonts.publicSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant,
-                ),
-              ),
-            ],
           ),
         ),
       ),

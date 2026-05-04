@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
+import '../widgets/taxi_shell_bottom_nav.dart';
 import '../router/taxi_question_transition.dart';
 
 class TaxiContinuePracticeScreen extends StatelessWidget {
@@ -279,7 +280,7 @@ class TaxiContinuePracticeScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: const TaxiShellBottomNav(),
     );
   }
 
@@ -364,66 +365,6 @@ class TaxiContinuePracticeScreen extends StatelessWidget {
               child: Icon(Icons.lock_outline_rounded, size: 12, color: AppColors.outline),
             ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(context, Icons.dashboard_rounded, 'Hem', 0, '/taxi-dashboard'),
-              _buildNavItem(context, Icons.map_rounded, 'Karta', 1, '/taxi-karta'),
-              _buildNavItem(context, Icons.shield_outlined, 'Säkerhet', 2, '/taxi-sakerhet'),
-              _buildNavItem(context, Icons.gavel_rounded, 'Lagar', 3, '/taxi-lagstiftning'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(BuildContext context, IconData icon, String label, int index, String route) {
-    final isSelected = index == 2;
-    return GestureDetector(
-      onTap: () => context.go(route),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: isSelected
-            ? BoxDecoration(
-                color: AppColors.primaryLight.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-              )
-            : null,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 24, color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: GoogleFonts.publicSans(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

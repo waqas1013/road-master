@@ -5,6 +5,11 @@ class AppColors {
   static const Color primary = Color(0xFF003B6A);
   static const Color primaryContainer = Color(0xFF005291);
   static const Color primaryLight = Color(0xFFD3E4FF);
+  /// Stitch `primary-fixed-dim` (CTA borders / accents).
+  static const Color primaryFixedDim = Color(0xFFA2C9FF);
+  /// Stitch `on-primary-fixed` / `on-primary-fixed-variant` (text on primary-fixed surfaces).
+  static const Color onPrimaryFixed = Color(0xFF001C38);
+  static const Color onPrimaryFixedVariant = Color(0xFF004881);
 
   // Secondary
   static const Color secondary = Color(0xFF3F627E);
