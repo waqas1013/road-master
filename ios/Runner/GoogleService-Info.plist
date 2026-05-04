@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.roadmaster.roadMaster</string>
+	<string>com.waqas.roadmaster</string>
 	<key>PROJECT_ID</key>
 	<string>road-master-se</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:685054591368:ios:541acc7fc008cffcc5ba3d</string>
+	<string>1:685054591368:ios:7d7f28460033e975c5ba3d</string>
 </dict>
 </plist>
