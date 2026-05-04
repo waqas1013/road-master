@@ -42,6 +42,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
     projectId: 'YOUR_PROJECT_ID',
     storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    iosBundleId: 'com.roadmaster.roadMaster',
+    iosBundleId: 'com.waqas.roadmaster',
   );
 }
