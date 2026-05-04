@@ -1,0 +1,12 @@
+rules_version = '2';
+// Taxi app: practice progress + mock exam history under users/{uid}/...
+// Only the signed-in user may read/write their own subtree.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == userId;
+    }
+  }
+}
