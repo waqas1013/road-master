@@ -26,6 +26,7 @@ migrate_working_dir/
 
 # Firebase — generated locally (FlutterFire / console); never commit real keys.
 /lib/firebase_options.dart
+.firebase/
 
 # Flutter/Dart/Pub related
 **/doc/api/
