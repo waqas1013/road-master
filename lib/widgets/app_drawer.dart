@@ -126,35 +126,65 @@ class AppDrawer extends StatelessWidget {
             ),
             child: Column(
               children: [
-                InkWell(
-                  onTap: () async {
-                    Navigator.pop(context);
-                    await AuthService.instance.signOut();
-                    if (context.mounted) context.go('/login');
-                  },
-                  borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.logout_rounded,
-                          color: AppColors.error,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          'Logga ut',
-                          style: GoogleFonts.publicSans(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.error,
+                if (user == null)
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.go('/login');
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.login_rounded,
+                            color: AppColors.primary,
+                            size: 24,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 16),
+                          Text(
+                            'Logga in',
+                            style: GoogleFonts.publicSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else
+                  InkWell(
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await AuthService.instance.signOut();
+                      if (context.mounted) context.go('/login');
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.logout_rounded,
+                            color: AppColors.error,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 16),
+                          Text(
+                            'Logga ut',
+                            style: GoogleFonts.publicSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.error,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
                 const SizedBox(height: 24),
                 Text(
                   'Version 2.4.1 (Build 102)',

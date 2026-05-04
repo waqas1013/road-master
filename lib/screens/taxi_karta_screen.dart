@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../data/taxi_karta_practice_sets.dart';
 import '../services/karta_practice_repository.dart';
 import '../theme/app_colors.dart';
+import '../router/taxi_question_transition.dart';
+
 class TaxiKartaScreen extends StatefulWidget {
   const TaxiKartaScreen({super.key});
 
@@ -209,7 +211,12 @@ class _TaxiKartaScreenState extends State<TaxiKartaScreen> {
         _afterReturn(() async {
           await KartaPracticeRepository.instance.clear(practiceSet);
           if (!context.mounted) return;
-          await context.push('/taxi-question?module=karta&practiceSet=$practiceSet&q=1');
+          await context.push(
+            taxiQuestionUriWithTx(
+              '/taxi-question?module=karta&practiceSet=$practiceSet&q=1',
+              TaxiQuestionTransition.forward,
+            ),
+          );
         }());
         return;
       }

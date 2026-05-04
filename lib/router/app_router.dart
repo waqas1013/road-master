@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'taxi_question_transition.dart';
 import '../screens/onboarding_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
@@ -40,6 +42,62 @@ const _publicPaths = {
   '/taxi-karta',
   '/dashboard',
 };
+
+TaxiInteractiveQuestionScreen _taxiQuestionScreenFromState(GoRouterState state) {
+  final module = state.uri.queryParameters['module'] ?? kTaxiModuleSakerhet;
+  final set = int.tryParse(state.uri.queryParameters['set'] ?? '1') ?? 1;
+  final q = int.tryParse(state.uri.queryParameters['q'] ?? '1') ?? 1;
+  final practiceSetRaw = state.uri.queryParameters['practiceSet'];
+  final practiceSet = practiceSetRaw != null ? int.tryParse(practiceSetRaw) : null;
+
+  final TaxiPracticeQuestion question;
+  final int? practiceSetArg;
+
+  if (module == kTaxiModuleSakerhet &&
+      practiceSet != null &&
+      practiceSet >= 1 &&
+      practiceSet <= kSakerhetPracticeSetCount) {
+    practiceSetArg = practiceSet;
+    question = lookupSakerhetPracticeQuestion(
+          practiceSet: practiceSet,
+          questionOneBased: q,
+        ) ??
+        taxiQuestionFallback;
+  } else if (module == kTaxiModuleLagstiftning &&
+      practiceSet != null &&
+      practiceSet >= 1 &&
+      practiceSet <= kLagstiftningPracticeSetCount) {
+    practiceSetArg = practiceSet;
+    question = lookupLagstiftningPracticeQuestion(
+          practiceSet: practiceSet,
+          questionOneBased: q,
+        ) ??
+        taxiQuestionFallback;
+  } else if (module == kTaxiModuleKarta &&
+      practiceSet != null &&
+      practiceSet >= 1 &&
+      practiceSet <= kKartaPracticeSetCount) {
+    practiceSetArg = practiceSet;
+    question = lookupKartaPracticeQuestion(
+          practiceSet: practiceSet,
+          questionOneBased: q,
+        ) ??
+        taxiQuestionFallback;
+  } else {
+    practiceSetArg = null;
+    question = lookupTaxiQuestion(module: module, set: set, questionOneBased: q) ??
+        taxiQuestionFallback;
+  }
+
+  final navIndex =
+      module == kTaxiModuleLagstiftning ? 3 : module == kTaxiModuleKarta ? 1 : 2;
+
+  return TaxiInteractiveQuestionScreen(
+    question: question,
+    practiceSet: practiceSetArg,
+    bottomNavActiveIndex: navIndex,
+  );
+}
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -111,60 +169,27 @@ class AppRouter {
       ),
       GoRoute(
         path: '/taxi-question',
-        builder: (context, state) {
-          final module = state.uri.queryParameters['module'] ?? kTaxiModuleSakerhet;
-          final set = int.tryParse(state.uri.queryParameters['set'] ?? '1') ?? 1;
-          final q = int.tryParse(state.uri.queryParameters['q'] ?? '1') ?? 1;
-          final practiceSetRaw = state.uri.queryParameters['practiceSet'];
-          final practiceSet = practiceSetRaw != null ? int.tryParse(practiceSetRaw) : null;
-
-          final TaxiPracticeQuestion question;
-          final int? practiceSetArg;
-
-          if (module == kTaxiModuleSakerhet &&
-              practiceSet != null &&
-              practiceSet >= 1 &&
-              practiceSet <= kSakerhetPracticeSetCount) {
-            practiceSetArg = practiceSet;
-            question = lookupSakerhetPracticeQuestion(
-                  practiceSet: practiceSet,
-                  questionOneBased: q,
-                ) ??
-                taxiQuestionFallback;
-          } else if (module == kTaxiModuleLagstiftning &&
-              practiceSet != null &&
-              practiceSet >= 1 &&
-              practiceSet <= kLagstiftningPracticeSetCount) {
-            practiceSetArg = practiceSet;
-            question = lookupLagstiftningPracticeQuestion(
-                  practiceSet: practiceSet,
-                  questionOneBased: q,
-                ) ??
-                taxiQuestionFallback;
-          } else if (module == kTaxiModuleKarta &&
-              practiceSet != null &&
-              practiceSet >= 1 &&
-              practiceSet <= kKartaPracticeSetCount) {
-            practiceSetArg = practiceSet;
-            question = lookupKartaPracticeQuestion(
-                  practiceSet: practiceSet,
-                  questionOneBased: q,
-                ) ??
-                taxiQuestionFallback;
-          } else {
-            practiceSetArg = null;
-            question = lookupTaxiQuestion(module: module, set: set, questionOneBased: q) ??
-                taxiQuestionFallback;
-          }
-
-          final navIndex = module == kTaxiModuleLagstiftning ? 3
-              : module == kTaxiModuleKarta ? 1
-              : 2;
-
-          return TaxiInteractiveQuestionScreen(
-            question: question,
-            practiceSet: practiceSetArg,
-            bottomNavActiveIndex: navIndex,
+        pageBuilder: (context, state) {
+          final child = _taxiQuestionScreenFromState(state);
+          final direction = taxiQuestionTransitionFromState(state);
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            transitionDuration: const Duration(milliseconds: 280),
+            reverseTransitionDuration: const Duration(milliseconds: 280),
+            child: child,
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              final begin = direction == TaxiQuestionTransition.forward
+                  ? const Offset(1.0, 0.0)
+                  : const Offset(-1.0, 0.0);
+              final curved = CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              );
+              return SlideTransition(
+                position: Tween<Offset>(begin: begin, end: Offset.zero).animate(curved),
+                child: child,
+              );
+            },
           );
         },
       ),

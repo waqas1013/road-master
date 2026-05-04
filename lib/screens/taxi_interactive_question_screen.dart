@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../data/taxi_karta_practice_sets.dart';
@@ -8,6 +10,7 @@ import '../data/taxi_lagstiftning_practice_sets.dart';
 import '../data/taxi_sakerhet_practice_sets.dart';
 import '../data/taxi_sakerhet_questions.dart';
 import '../models/taxi_practice_question.dart';
+import '../router/taxi_question_transition.dart';
 import '../services/karta_practice_repository.dart';
 import '../services/lagar_practice_repository.dart';
 import '../services/sakerhet_practice_repository.dart';
@@ -182,6 +185,40 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
     });
   }
 
+  Widget _wrapPracticeSwipe(BuildContext context, Widget child) {
+    if (widget.practiceSet == null) return child;
+    return _HorizontalPracticeSwipe(
+      onSwipeLeft: () => unawaited(_handleSwipeNext()),
+      onSwipeRight: _handleSwipePrevious,
+      child: child,
+    );
+  }
+
+  Future<void> _handleSwipeNext() async {
+    if (widget.practiceSet == null) return;
+    HapticFeedback.lightImpact();
+    await _onNext();
+  }
+
+  void _handleSwipePrevious() {
+    final ps = widget.practiceSet;
+    if (ps == null) return;
+    if (q.questionNumber <= 1) {
+      HapticFeedback.selectionClick();
+      return;
+    }
+    HapticFeedback.lightImpact();
+    final prev = q.questionNumber - 1;
+    unawaited(_setResume(ps, prev));
+    context.pushReplacement(
+      taxiQuestionUriWithTx(
+        '$_questionRoute&practiceSet=$ps&q=$prev',
+        TaxiQuestionTransition.backward,
+      ),
+      extra: TaxiQuestionTransition.backward,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,12 +261,14 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+            child: _wrapPracticeSwipe(
+              context,
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     const SizedBox(height: 24),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(9999),
@@ -415,6 +454,7 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
                 ),
               ),
             ),
+            ),
           ),
           Container(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
@@ -438,7 +478,11 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
                                 final prev = q.questionNumber - 1;
                                 unawaited(_setResume(ps, prev));
                                 context.pushReplacement(
-                                  '$_questionRoute&practiceSet=$ps&q=$prev',
+                                  taxiQuestionUriWithTx(
+                                    '$_questionRoute&practiceSet=$ps&q=$prev',
+                                    TaxiQuestionTransition.backward,
+                                  ),
+                                  extra: TaxiQuestionTransition.backward,
                                 );
                               } else {
                                 context.pop();
@@ -615,7 +659,11 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
       }
       if (nextQuestion != null) {
         context.pushReplacement(
-          '$_questionRoute&practiceSet=$ps&q=$nextNum',
+          taxiQuestionUriWithTx(
+            '$_questionRoute&practiceSet=$ps&q=$nextNum',
+            TaxiQuestionTransition.forward,
+          ),
+          extra: TaxiQuestionTransition.forward,
         );
       }
       return;
@@ -629,7 +677,11 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
     );
     if (nextQ != null) {
       context.pushReplacement(
-        '/taxi-question?module=${q.moduleId}&set=${q.setNumber}&q=$next',
+        taxiQuestionUriWithTx(
+          '/taxi-question?module=${q.moduleId}&set=${q.setNumber}&q=$next',
+          TaxiQuestionTransition.forward,
+        ),
+        extra: TaxiQuestionTransition.forward,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -803,6 +855,61 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
           ),
         ),
       ),
+    );
+  }
+}
+
+/// iOS-style horizontal fling: swipe left → next, swipe right → previous.
+/// Uses velocity or distance so it plays well with vertical scrolling.
+class _HorizontalPracticeSwipe extends StatefulWidget {
+  const _HorizontalPracticeSwipe({
+    required this.onSwipeLeft,
+    required this.onSwipeRight,
+    required this.child,
+  });
+
+  final VoidCallback onSwipeLeft;
+  final VoidCallback onSwipeRight;
+  final Widget child;
+
+  @override
+  State<_HorizontalPracticeSwipe> createState() => _HorizontalPracticeSwipeState();
+}
+
+class _HorizontalPracticeSwipeState extends State<_HorizontalPracticeSwipe> {
+  double _accumulatedDx = 0;
+
+  static const double _minVelocity = 260;
+  static const double _minDistance = 52;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      dragStartBehavior: DragStartBehavior.down,
+      behavior: HitTestBehavior.deferToChild,
+      onHorizontalDragUpdate: (d) => _accumulatedDx += d.delta.dx,
+      onHorizontalDragEnd: (details) {
+        final v = details.primaryVelocity;
+        final dist = _accumulatedDx;
+        _accumulatedDx = 0;
+
+        late final bool goNext;
+        if (v != null && v.abs() >= _minVelocity) {
+          goNext = v < 0;
+        } else if (dist.abs() >= _minDistance) {
+          goNext = dist < 0;
+        } else {
+          return;
+        }
+
+        if (goNext) {
+          widget.onSwipeLeft();
+        } else {
+          widget.onSwipeRight();
+        }
+      },
+      onHorizontalDragCancel: () => _accumulatedDx = 0,
+      child: widget.child,
     );
   }
 }

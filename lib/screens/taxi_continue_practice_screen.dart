@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
+import '../router/taxi_question_transition.dart';
 
 class TaxiContinuePracticeScreen extends StatelessWidget {
   const TaxiContinuePracticeScreen({super.key});
@@ -161,7 +162,12 @@ class TaxiContinuePracticeScreen extends StatelessWidget {
                             width: double.infinity,
                             height: 44,
                             child: ElevatedButton(
-                              onPressed: () => context.push('/taxi-question'),
+                              onPressed: () => context.push(
+                                taxiQuestionUriWithTx(
+                                  '/taxi-question',
+                                  TaxiQuestionTransition.forward,
+                                ),
+                              ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF0D325E), // Darker shade of primary
                                 foregroundColor: Colors.white,

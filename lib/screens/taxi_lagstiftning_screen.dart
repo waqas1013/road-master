@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../data/taxi_lagstiftning_practice_sets.dart';
 import '../services/lagar_practice_repository.dart';
 import '../theme/app_colors.dart';
+import '../router/taxi_question_transition.dart';
+
 class TaxiLagstiftningScreen extends StatefulWidget {
   const TaxiLagstiftningScreen({super.key});
 
@@ -209,7 +211,12 @@ class _TaxiLagstiftningScreenState extends State<TaxiLagstiftningScreen> {
         _afterReturn(() async {
           await LagarPracticeRepository.instance.clear(practiceSet);
           if (!context.mounted) return;
-          await context.push('/taxi-question?module=lagstiftning&practiceSet=$practiceSet&q=1');
+          await context.push(
+            taxiQuestionUriWithTx(
+              '/taxi-question?module=lagstiftning&practiceSet=$practiceSet&q=1',
+              TaxiQuestionTransition.forward,
+            ),
+          );
         }());
         return;
       }

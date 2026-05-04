@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../data/taxi_sakerhet_practice_sets.dart';
 import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
+import '../router/taxi_question_transition.dart';
 
 /// Results for a finished **Säkerhet** practice set (Set 1–4).
 class TaxiReviewResultsScreen extends StatelessWidget {
@@ -140,7 +141,12 @@ class TaxiReviewResultsScreen extends StatelessWidget {
                     onPressed: () async {
                       await SakerhetPracticeRepository.instance.clear(practiceSet);
                       if (!context.mounted) return;
-                      context.go('/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=1');
+                      context.go(
+                        taxiQuestionUriWithTx(
+                          '/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=1',
+                          TaxiQuestionTransition.forward,
+                        ),
+                      );
                     },
                     icon: const Icon(Icons.refresh_rounded, size: 20),
                     label: Text(

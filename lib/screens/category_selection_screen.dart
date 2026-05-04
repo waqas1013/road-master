@@ -11,10 +11,14 @@ class CategorySelectionScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: () => context.pop(),
-        ),
+        automaticallyImplyLeading: false,
+        leading: context.canPop()
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                tooltip: 'Tillbaka',
+                onPressed: () => context.pop(),
+              )
+            : null,
         title: const Text('Välj Behörighet'),
       ),
       body: SingleChildScrollView(

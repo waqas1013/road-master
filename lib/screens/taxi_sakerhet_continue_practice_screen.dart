@@ -5,6 +5,7 @@ import '../data/taxi_sakerhet_practice_sets.dart';
 import '../models/taxi_practice_question.dart';
 import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
+import '../router/taxi_question_transition.dart';
 
 enum _QuestionCellState {
   current,
@@ -61,7 +62,11 @@ class _TaxiSakerhetContinuePracticeScreenState extends State<TaxiSakerhetContinu
     await SakerhetPracticeRepository.instance.clear(practiceSet);
     if (!mounted) return;
     context.pushReplacement(
-      '/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=1',
+      taxiQuestionUriWithTx(
+        '/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=1',
+        TaxiQuestionTransition.forward,
+      ),
+      extra: TaxiQuestionTransition.forward,
     );
   }
 
@@ -152,7 +157,10 @@ class _TaxiSakerhetContinuePracticeScreenState extends State<TaxiSakerhetContinu
         final summaryLine = _setSummaryLine(partition);
         final themeLine = _dominantThemeLabel(partition);
 
-        final resumeUri = '/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=$nq';
+        final resumeUri = taxiQuestionUriWithTx(
+          '/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=$nq',
+          TaxiQuestionTransition.forward,
+        );
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -407,7 +415,10 @@ class _TaxiSakerhetContinuePracticeScreenState extends State<TaxiSakerhetContinu
                   width: double.infinity,
                   height: 48,
                   child: FilledButton(
-                    onPressed: () => context.push(resumeUri),
+                    onPressed: () => context.push(
+                      resumeUri,
+                      extra: TaxiQuestionTransition.forward,
+                    ),
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFF0D325E),
                       foregroundColor: Colors.white,
@@ -581,8 +592,18 @@ class _TaxiSakerhetContinuePracticeScreenState extends State<TaxiSakerhetContinu
               final isFuture = i > nextQuestion;
               final isSaved = id.isNotEmpty && bookmarks.contains(id);
 
-              final uri = '/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=$i';
-              void openQuestion() => context.push(uri);
+              final uri = taxiQuestionUriWithTx(
+                '/taxi-question?module=sakerhet&practiceSet=$practiceSet&q=$i',
+                i >= nextQuestion
+                    ? TaxiQuestionTransition.forward
+                    : TaxiQuestionTransition.backward,
+              );
+              void openQuestion() => context.push(
+                    uri,
+                    extra: i >= nextQuestion
+                        ? TaxiQuestionTransition.forward
+                        : TaxiQuestionTransition.backward,
+                  );
 
               if (i > unlockedThrough) {
                 return _gridCell(
