@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../data/taxi_karta_practice_sets.dart';
+import '../data/taxi_lagstiftning_practice_sets.dart';
 import '../data/taxi_sakerhet_practice_sets.dart';
 import '../data/taxi_sakerhet_questions.dart';
 import '../models/taxi_practice_question.dart';
+import '../services/karta_practice_repository.dart';
+import '../services/lagar_practice_repository.dart';
 import '../services/sakerhet_practice_repository.dart';
 import '../theme/app_colors.dart';
 import '../widgets/taxi_option_step_text.dart';
@@ -37,6 +41,75 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
 
   TaxiPracticeQuestion get q => widget.question;
   bool get _isLastQuestion => q.questionNumber >= q.totalInSet;
+  bool get _isLagar => q.moduleId == kTaxiModuleLagstiftning;
+  bool get _isKarta => q.moduleId == kTaxiModuleKarta;
+
+  int? _loadAnswer(int ps) {
+    if (_isKarta) return KartaPracticeRepository.instance.load(ps)?.answers[q.id];
+    if (_isLagar) return LagarPracticeRepository.instance.load(ps)?.answers[q.id];
+    return SakerhetPracticeRepository.instance.load(ps)?.answers[q.id];
+  }
+
+  bool _loadBookmark(int ps) {
+    if (_isKarta) return KartaPracticeRepository.instance.isBookmarked(ps, q.id);
+    if (_isLagar) return LagarPracticeRepository.instance.isBookmarked(ps, q.id);
+    return SakerhetPracticeRepository.instance.isBookmarked(ps, q.id);
+  }
+
+  Future<void> _setResume(int ps, int questionNum) async {
+    if (_isKarta) {
+      await KartaPracticeRepository.instance.setResumeQuestion(ps, questionNum);
+    } else if (_isLagar) {
+      await LagarPracticeRepository.instance.setResumeQuestion(ps, questionNum);
+    } else {
+      await SakerhetPracticeRepository.instance.setResumeQuestion(ps, questionNum);
+    }
+  }
+
+  Future<void> _doToggleBookmark(int ps) async {
+    if (_isKarta) {
+      await KartaPracticeRepository.instance.toggleBookmark(practiceSet: ps, questionId: q.id);
+    } else if (_isLagar) {
+      await LagarPracticeRepository.instance.toggleBookmark(practiceSet: ps, questionId: q.id);
+    } else {
+      await SakerhetPracticeRepository.instance.toggleBookmark(practiceSet: ps, questionId: q.id);
+    }
+  }
+
+  Future<void> _doRecordAnswer(int ps, int selectedIndex) async {
+    if (_isKarta) {
+      await KartaPracticeRepository.instance.recordAnswer(
+        practiceSet: ps, questionId: q.id, selectedIndex: selectedIndex, currentQuestionIndex: q.questionNumber,
+      );
+    } else if (_isLagar) {
+      await LagarPracticeRepository.instance.recordAnswer(
+        practiceSet: ps, questionId: q.id, selectedIndex: selectedIndex, currentQuestionIndex: q.questionNumber,
+      );
+    } else {
+      await SakerhetPracticeRepository.instance.recordAnswer(
+        practiceSet: ps, questionId: q.id, selectedIndex: selectedIndex, currentQuestionIndex: q.questionNumber,
+      );
+    }
+  }
+
+  Future<void> _doAdvance(int ps, int nextQ, int total) async {
+    if (_isKarta) {
+      await KartaPracticeRepository.instance.advanceAfterNext(
+        practiceSet: ps, nextQuestionOneBased: nextQ, totalInSet: total,
+      );
+    } else if (_isLagar) {
+      await LagarPracticeRepository.instance.advanceAfterNext(
+        practiceSet: ps, nextQuestionOneBased: nextQ, totalInSet: total,
+      );
+    } else {
+      await SakerhetPracticeRepository.instance.advanceAfterNext(
+        practiceSet: ps, nextQuestionOneBased: nextQ, totalInSet: total,
+      );
+    }
+  }
+
+  String get _reviewRoute => _isKarta ? '/taxi-karta-review' : _isLagar ? '/taxi-lagar-review' : '/taxi-sakerhet-review';
+  String get _questionRoute => '/taxi-question?module=${q.moduleId}';
 
   @override
   void initState() {
@@ -45,12 +118,12 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
       if (!mounted) return;
       final ps = widget.practiceSet;
       if (ps != null) {
-        await SakerhetPracticeRepository.instance.setResumeQuestion(ps, widget.question.questionNumber);
+        await _setResume(ps, widget.question.questionNumber);
       }
       if (!mounted) return;
       if (ps != null) {
-        final saved = SakerhetPracticeRepository.instance.load(ps)?.answers[q.id];
-        final marked = SakerhetPracticeRepository.instance.isBookmarked(ps, q.id);
+        final saved = _loadAnswer(ps);
+        final marked = _loadBookmark(ps);
         if (saved != null) {
           setState(() {
             _selectedOption = saved;
@@ -81,8 +154,8 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
         });
         return;
       }
-      final saved = SakerhetPracticeRepository.instance.load(ps)?.answers[q.id];
-      final marked = SakerhetPracticeRepository.instance.isBookmarked(ps, q.id);
+      final saved = _loadAnswer(ps);
+      final marked = _loadBookmark(ps);
       setState(() {
         _bookmarked = marked;
         if (saved != null) {
@@ -101,13 +174,10 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
   Future<void> _toggleBookmark() async {
     final ps = widget.practiceSet;
     if (ps == null) return;
-    await SakerhetPracticeRepository.instance.toggleBookmark(
-      practiceSet: ps,
-      questionId: q.id,
-    );
+    await _doToggleBookmark(ps);
     if (!mounted) return;
     setState(() {
-      _bookmarked = SakerhetPracticeRepository.instance.isBookmarked(ps, q.id);
+      _bookmarked = _loadBookmark(ps);
     });
   }
 
@@ -252,12 +322,7 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
                               });
                               final ps = widget.practiceSet;
                               if (ps != null) {
-                                await SakerhetPracticeRepository.instance.recordAnswer(
-                                  practiceSet: ps,
-                                  questionId: q.id,
-                                  selectedIndex: _selectedOption,
-                                  currentQuestionIndex: q.questionNumber,
-                                );
+                                await _doRecordAnswer(ps, _selectedOption);
                               }
                             },
                         style: ElevatedButton.styleFrom(
@@ -370,9 +435,9 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
                               if (widget.practiceSet != null) {
                                 final ps = widget.practiceSet!;
                                 final prev = q.questionNumber - 1;
-                                unawaited(SakerhetPracticeRepository.instance.setResumeQuestion(ps, prev));
+                                unawaited(_setResume(ps, prev));
                                 context.pushReplacement(
-                                  '/taxi-question?module=sakerhet&practiceSet=$ps&q=$prev',
+                                  '$_questionRoute&practiceSet=$ps&q=$prev',
                                 );
                               } else {
                                 context.pop();
@@ -535,33 +600,30 @@ class _TaxiInteractiveQuestionScreenState extends State<TaxiInteractiveQuestionS
       final total = q.totalInSet;
       final nextNum = q.questionNumber + 1;
 
-      // Save selection even without "Kontrollera svar" so grid + reopen show rätt/fel and choice.
       if (_selectedOption >= 0) {
-        await SakerhetPracticeRepository.instance.recordAnswer(
-          practiceSet: ps,
-          questionId: q.id,
-          selectedIndex: _selectedOption,
-          currentQuestionIndex: q.questionNumber,
-        );
+        await _doRecordAnswer(ps, _selectedOption);
       }
 
-      await SakerhetPracticeRepository.instance.advanceAfterNext(
-        practiceSet: ps,
-        nextQuestionOneBased: nextNum,
-        totalInSet: total,
-      );
+      await _doAdvance(ps, nextNum, total);
 
       if (!mounted) return;
 
       if (nextNum > total) {
-        context.go('/taxi-sakerhet-review?practiceSet=$ps');
+        context.go('$_reviewRoute?practiceSet=$ps');
         return;
       }
 
-      final nextQ = lookupSakerhetPracticeQuestion(practiceSet: ps, questionOneBased: nextNum);
-      if (nextQ != null) {
+      TaxiPracticeQuestion? nextQuestion;
+      if (_isKarta) {
+        nextQuestion = lookupKartaPracticeQuestion(practiceSet: ps, questionOneBased: nextNum);
+      } else if (_isLagar) {
+        nextQuestion = lookupLagstiftningPracticeQuestion(practiceSet: ps, questionOneBased: nextNum);
+      } else {
+        nextQuestion = lookupSakerhetPracticeQuestion(practiceSet: ps, questionOneBased: nextNum);
+      }
+      if (nextQuestion != null) {
         context.pushReplacement(
-          '/taxi-question?module=sakerhet&practiceSet=$ps&q=$nextNum',
+          '$_questionRoute&practiceSet=$ps&q=$nextNum',
         );
       }
       return;

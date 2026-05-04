@@ -15,6 +15,13 @@ class AppColors {
   // Tertiary
   static const Color tertiary = Color(0xFF313B42);
   static const Color tertiaryContainer = Color(0xFF485259);
+  static const Color tertiaryFixed = Color(0xFFDAE4ED);
+  static const Color onTertiaryFixed = Color(0xFF131D23);
+
+  // Extra semantic on-colors
+  static const Color onSecondaryFixed = Color(0xFF001E30);
+  static const Color onErrorContainer = Color(0xFF93000A);
+  static const Color surfaceTint = Color(0xFF1F60A0);
 
   // Backgrounds & Surfaces
   static const Color background = Color(0xFFFBF9F8);

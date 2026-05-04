@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../data/taxi_sakerhet_practice_sets.dart';
+import '../data/taxi_lagstiftning_practice_sets.dart';
+import '../data/taxi_karta_practice_sets.dart';
+import '../services/sakerhet_practice_repository.dart';
+import '../services/lagar_practice_repository.dart';
+import '../services/karta_practice_repository.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
 
-/// Hem (taxi) — matches Stitch screen "Taxi License Dashboard"
-/// (Tailwind tokens: background, primary-container card, module shadows, bottom nav).
 class TaxiDashboardScreen extends StatefulWidget {
   const TaxiDashboardScreen({super.key});
 
@@ -14,9 +18,6 @@ class TaxiDashboardScreen extends StatefulWidget {
 }
 
 class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
-  static const double _horizontalPadding = 20;
-  static const double _sectionVerticalPadding = 24;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,86 +28,75 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 64,
-        shadowColor: Colors.black.withValues(alpha: 0.05),
         automaticallyImplyLeading: false,
-        shape: Border(
+        shape: const Border(
           bottom: BorderSide(color: AppColors.surfaceVariant, width: 1),
         ),
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(Icons.menu_rounded, size: 24, color: AppColors.primaryContainer),
+            icon: const Icon(Icons.menu_rounded, size: 24, color: AppColors.primaryContainer),
             onPressed: () => Scaffold.of(context).openDrawer(),
-            style: IconButton.styleFrom(
-              foregroundColor: AppColors.primaryContainer,
-              hoverColor: AppColors.surfaceContainerLow.withValues(alpha: 0.5),
-            ),
           ),
         ),
         title: Text(
           'Taxi Teori',
           style: GoogleFonts.publicSans(
-            fontSize: 32,
-            fontWeight: FontWeight.w700,
-            height: 40 / 32,
-            letterSpacing: -0.02 * 32,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.02 * 20,
             color: AppColors.primaryContainer,
           ),
         ),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
           GestureDetector(
             onTap: () => context.push('/category-selection'),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.secondaryContainer,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(9999),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 2,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.local_taxi_rounded, size: 14, color: AppColors.onSecondaryContainer),
-                  const SizedBox(width: 4),
+                  Icon(Icons.directions_car_rounded, size: 20, color: AppColors.onSecondaryContainer),
+                  const SizedBox(width: 6),
                   Text(
-                    'Taxi',
+                    'B',
                     style: GoogleFonts.publicSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.02 * 14,
                       color: AppColors.onSecondaryContainer,
                     ),
                   ),
-                  const SizedBox(width: 2),
-                  Icon(Icons.swap_horiz_rounded, size: 14, color: AppColors.onSecondaryContainer),
+                  const SizedBox(width: 4),
+                  Icon(Icons.swap_horiz_rounded, size: 18, color: AppColors.onSecondaryContainer),
                 ],
               ),
             ),
           ),
-          const SizedBox(width: 4),
-          IconButton(
-            icon: Icon(Icons.account_circle_outlined, size: 26, color: AppColors.primaryContainer),
-            onPressed: () {},
-            style: IconButton.styleFrom(
-              foregroundColor: AppColors.primaryContainer,
-              hoverColor: AppColors.surfaceContainerLow.withValues(alpha: 0.5),
-            ),
-          ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 12),
         ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            _horizontalPadding,
-            _sectionVerticalPadding,
-            _horizontalPadding,
-            88,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 88),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ─── Heading ───
               Text(
-                'Welcome back, Alex',
+                'Din taxikurs',
                 style: GoogleFonts.publicSans(
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
@@ -117,7 +107,7 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                "You're making great progress towards your Taxi License.",
+                'Välj en modul nedan för att starta din teoriträning för taxilegitimation.',
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
@@ -126,46 +116,56 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              _buildReadinessCard(),
-              const SizedBox(height: 40),
+              // ─── Module 1: Säkerhet & Beteende ───
               _buildModuleCard(
                 moduleNumber: 1,
-                icon: Icons.security_rounded,
-                iconColor: AppColors.onSecondaryContainer,
-                iconBg: AppColors.secondaryContainer,
+                icon: Icons.verified_user_rounded,
+                iconBg: AppColors.secondaryFixed,
+                iconColor: AppColors.onSecondaryFixed,
                 title: 'Säkerhet & Beteende',
-                description:
-                    'Understand passenger safety, conflict resolution, and professional conduct.',
-                progress: 0.85,
-                progressColor: AppColors.primary,
+                description: 'Grundläggande säkerhetsrutiner och professionellt bemötande som taxiförare.',
+                progress: _sakerhetProgress(),
                 onTap: () => context.push('/taxi-sakerhet'),
               ),
               const SizedBox(height: 16),
+              // ─── Module 2: Karta ───
               _buildModuleCard(
                 moduleNumber: 2,
                 icon: Icons.map_rounded,
-                iconColor: AppColors.onSecondaryContainer,
-                iconBg: AppColors.secondaryContainer,
+                iconBg: AppColors.tertiaryFixed,
+                iconColor: AppColors.onTertiaryFixed,
                 title: 'Karta',
-                description:
-                    'Master navigation, reading maps, and efficient route planning in urban environments.',
-                progress: 0.42,
-                progressColor: AppColors.secondary,
+                description: 'Kartläsning, navigering och lokalkännedom för effektiva resor.',
+                progress: _kartaProgress(),
                 onTap: () => context.push('/taxi-karta'),
               ),
               const SizedBox(height: 16),
+              // ─── Module 3: Lagstiftning ───
               _buildModuleCard(
                 moduleNumber: 3,
                 icon: Icons.gavel_rounded,
-                iconColor: AppColors.onTertiary,
-                iconBg: AppColors.tertiaryContainer,
+                iconBg: AppColors.errorContainer,
+                iconColor: AppColors.onErrorContainer,
                 title: 'Lagstiftning',
-                description:
-                    'Learn the specific laws and regulations governing taxi operations in Sweden.',
-                progress: 0.12,
-                progressColor: AppColors.tertiary,
+                description: 'Lagar, regler och förordningar som styr taxiverksamhet i Sverige.',
+                progress: _lagarProgress(),
                 onTap: () => context.push('/taxi-lagstiftning'),
               ),
+              const SizedBox(height: 16),
+              // ─── Module 4: Vägmärken (coming soon) ───
+              _buildModuleCard(
+                moduleNumber: 4,
+                icon: Icons.traffic_rounded,
+                iconBg: AppColors.primaryContainer,
+                iconColor: AppColors.onPrimaryContainer,
+                title: 'Vägmärken',
+                description: 'Fördjupad kunskap om vägmärken och trafiksignaler för yrkesförare.',
+                progress: 0.0,
+                onTap: () {},
+              ),
+              const SizedBox(height: 16),
+              // ─── Slutprov card ───
+              _buildSlutprovCard(),
               const SizedBox(height: 32),
             ],
           ),
@@ -175,115 +175,51 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
     );
   }
 
-  Widget _buildReadinessCard() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.primaryContainer,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.hardEdge,
-      child: Stack(
-        children: [
-          Positioned(
-            right: -40,
-            top: -40,
-            child: Icon(
-              Icons.local_taxi_rounded,
-              size: 120,
-              color: AppColors.onPrimary.withValues(alpha: 0.1),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Overall Readiness',
-                  style: GoogleFonts.publicSans(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    height: 28 / 20,
-                    color: AppColors.onPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      '68%',
-                      style: GoogleFonts.publicSans(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
-                        height: 40 / 32,
-                        letterSpacing: -0.02 * 32,
-                        color: AppColors.onPrimary,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        'Mastery',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          height: 20 / 14,
-                          color: AppColors.onPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  height: 8,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(9999),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: FractionallySizedBox(
-                      widthFactor: 0.68,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: AppColors.secondaryFixed,
-                          borderRadius: BorderRadius.all(Radius.circular(9999)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+  // ─── Progress helpers ──────────────────────────────────────
+
+  double _sakerhetProgress() {
+    var totalQ = 0;
+    var answered = 0;
+    for (var i = 1; i <= kSakerhetPracticeSetCount; i++) {
+      totalQ += sakerhetPracticeSetSize(i);
+      final p = SakerhetPracticeRepository.instance.load(i);
+      if (p != null) answered += p.totalAnswered;
+    }
+    return totalQ > 0 ? answered / totalQ : 0;
   }
+
+  double _lagarProgress() {
+    var totalQ = 0;
+    var answered = 0;
+    for (var i = 1; i <= kLagstiftningPracticeSetCount; i++) {
+      totalQ += lagstiftningPracticeSetSize(i);
+      final p = LagarPracticeRepository.instance.load(i);
+      if (p != null) answered += p.totalAnswered;
+    }
+    return totalQ > 0 ? answered / totalQ : 0;
+  }
+
+  double _kartaProgress() {
+    var totalQ = 0;
+    var answered = 0;
+    for (var i = 1; i <= kKartaPracticeSetCount; i++) {
+      totalQ += kartaPracticeSetSize(i);
+      final p = KartaPracticeRepository.instance.load(i);
+      if (p != null) answered += p.totalAnswered;
+    }
+    return totalQ > 0 ? answered / totalQ : 0;
+  }
+
+  // ─── Module card ───────────────────────────────────────────
 
   Widget _buildModuleCard({
     required int moduleNumber,
     required IconData icon,
-    required Color iconColor,
     required Color iconBg,
+    required Color iconColor,
     required String title,
     required String description,
     required double progress,
-    required Color progressColor,
     required VoidCallback onTap,
   }) {
     final pct = (progress * 100).round();
@@ -293,15 +229,15 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: AppColors.cardBackground,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.surfaceVariant),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 4,
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -313,23 +249,23 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       color: iconBg,
-                      shape: BoxShape.circle,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(icon, color: iconColor, size: 22),
+                    child: Icon(icon, color: iconColor, size: 24),
                   ),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceContainer,
-                      borderRadius: BorderRadius.circular(9999),
+                      color: AppColors.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      'Module $moduleNumber',
+                      'Modul $moduleNumber',
                       style: GoogleFonts.publicSans(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -360,12 +296,12 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
                   color: AppColors.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Progress',
+                    'Framsteg',
                     style: GoogleFonts.publicSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -386,20 +322,20 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
               ),
               const SizedBox(height: 4),
               Container(
-                height: 6,
+                height: 8,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceVariant,
+                  color: AppColors.surfaceContainer,
                   borderRadius: BorderRadius.circular(9999),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: FractionallySizedBox(
-                    widthFactor: progress,
+                    widthFactor: progress.clamp(0.0, 1.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: progressColor,
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.circular(9999),
                       ),
                     ),
@@ -413,11 +349,144 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
     );
   }
 
+  // ─── Slutprov card ─────────────────────────────────────────
+
+  Widget _buildSlutprovCard() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => context.push('/taxi-mock-exams'),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.primary, AppColors.surfaceTint],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.10),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: Stack(
+            children: [
+              Positioned(
+                right: -32,
+                top: -32,
+                child: Container(
+                  width: 128,
+                  height: 128,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.10),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -32,
+                bottom: -32,
+                child: Container(
+                  width: 96,
+                  height: 96,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.10),
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.school_rounded, size: 24, color: AppColors.onPrimary),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.20),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'Slutprov',
+                          style: GoogleFonts.publicSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            height: 16 / 12,
+                            color: AppColors.onPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Redo för testet?',
+                    style: GoogleFonts.publicSans(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      height: 32 / 24,
+                      letterSpacing: -0.01 * 24,
+                      color: AppColors.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Ett simulerat teoriprov med 70 frågor för taxilegitimation. Provet efterliknar Trafikverkets riktiga test.',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      height: 20 / 14,
+                      color: AppColors.onPrimary.withValues(alpha: 0.90),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => context.push('/taxi-mock-exams'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.cardBackground,
+                        foregroundColor: AppColors.primary,
+                        elevation: 1,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: Text(
+                        'Starta Slutprov',
+                        style: GoogleFonts.publicSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          height: 20 / 14,
+                          letterSpacing: 0.02 * 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─── Bottom nav ────────────────────────────────────────────
+
   Widget _buildBottomNav(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        border: Border(
+        color: AppColors.cardBackground.withValues(alpha: 0.95),
+        border: const Border(
           top: BorderSide(color: AppColors.surfaceVariant, width: 1),
         ),
         boxShadow: [
@@ -434,38 +503,10 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(
-                context,
-                icon: Icons.dashboard_rounded,
-                label: 'Hem',
-                isSelected: true,
-                route: '/taxi-dashboard',
-                index: 0,
-              ),
-              _buildNavItem(
-                context,
-                icon: Icons.map_outlined,
-                label: 'Karta',
-                isSelected: false,
-                route: '/taxi-karta',
-                index: 1,
-              ),
-              _buildNavItem(
-                context,
-                icon: Icons.security_outlined,
-                label: 'Säkerhet',
-                isSelected: false,
-                route: '/taxi-sakerhet',
-                index: 2,
-              ),
-              _buildNavItem(
-                context,
-                icon: Icons.gavel_outlined,
-                label: 'Lagar',
-                isSelected: false,
-                route: '/taxi-lagstiftning',
-                index: 3,
-              ),
+              _navItem(context, icon: Icons.home_rounded, label: 'Hem', isSelected: true, route: '/taxi-dashboard'),
+              _navItem(context, icon: Icons.map_outlined, label: 'Karta', isSelected: false, route: '/taxi-karta'),
+              _navItem(context, icon: Icons.verified_user_outlined, label: 'Säkerhet', isSelected: false, route: '/taxi-sakerhet'),
+              _navItem(context, icon: Icons.gavel_outlined, label: 'Lagar', isSelected: false, route: '/taxi-lagstiftning'),
             ],
           ),
         ),
@@ -473,13 +514,12 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
     );
   }
 
-  Widget _buildNavItem(
+  Widget _navItem(
     BuildContext context, {
     required IconData icon,
     required String label,
     required bool isSelected,
     required String route,
-    required int index,
   }) {
     return Material(
       color: Colors.transparent,
@@ -499,11 +539,7 @@ class _TaxiDashboardScreenState extends State<TaxiDashboardScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                size: 24,
-                color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant,
-              ),
+              Icon(icon, size: 24, color: isSelected ? AppColors.primaryContainer : AppColors.onSurfaceVariant),
               const SizedBox(height: 4),
               Text(
                 label,

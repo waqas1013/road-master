@@ -11,11 +11,18 @@ import '../screens/taxi_lagstiftning_screen.dart';
 import '../screens/taxi_sakerhet_screen.dart';
 import '../data/taxi_sakerhet_questions.dart';
 import '../data/taxi_sakerhet_practice_sets.dart';
+import '../data/taxi_lagstiftning_practice_sets.dart';
+import '../data/taxi_karta_practice_sets.dart';
 import '../models/taxi_practice_question.dart';
 import '../screens/taxi_interactive_question_screen.dart';
 import '../screens/taxi_continue_practice_screen.dart';
 import '../screens/taxi_sakerhet_continue_practice_screen.dart';
+import '../screens/taxi_lagar_continue_practice_screen.dart';
+import '../screens/taxi_karta_continue_practice_screen.dart';
 import '../screens/taxi_review_results_screen.dart';
+import '../screens/taxi_lagar_review_results_screen.dart';
+import '../screens/taxi_karta_review_results_screen.dart';
+import '../screens/taxi_mock_exams_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -87,15 +94,40 @@ class AppRouter {
                   questionOneBased: q,
                 ) ??
                 taxiQuestionFallback;
+          } else if (module == kTaxiModuleLagstiftning &&
+              practiceSet != null &&
+              practiceSet >= 1 &&
+              practiceSet <= kLagstiftningPracticeSetCount) {
+            practiceSetArg = practiceSet;
+            question = lookupLagstiftningPracticeQuestion(
+                  practiceSet: practiceSet,
+                  questionOneBased: q,
+                ) ??
+                taxiQuestionFallback;
+          } else if (module == kTaxiModuleKarta &&
+              practiceSet != null &&
+              practiceSet >= 1 &&
+              practiceSet <= kKartaPracticeSetCount) {
+            practiceSetArg = practiceSet;
+            question = lookupKartaPracticeQuestion(
+                  practiceSet: practiceSet,
+                  questionOneBased: q,
+                ) ??
+                taxiQuestionFallback;
           } else {
             practiceSetArg = null;
             question = lookupTaxiQuestion(module: module, set: set, questionOneBased: q) ??
                 taxiQuestionFallback;
           }
 
+          final navIndex = module == kTaxiModuleLagstiftning ? 3
+              : module == kTaxiModuleKarta ? 1
+              : 2;
+
           return TaxiInteractiveQuestionScreen(
             question: question,
             practiceSet: practiceSetArg,
+            bottomNavActiveIndex: navIndex,
           );
         },
       ),
@@ -118,6 +150,42 @@ class AppRouter {
           final clamped = ps.clamp(1, kSakerhetPracticeSetCount);
           return TaxiReviewResultsScreen(practiceSet: clamped);
         },
+      ),
+      GoRoute(
+        path: '/taxi-lagar-continue',
+        builder: (context, state) {
+          final ps = int.tryParse(state.uri.queryParameters['practiceSet'] ?? '1') ?? 1;
+          final clamped = ps.clamp(1, kLagstiftningPracticeSetCount);
+          return TaxiLagarContinuePracticeScreen(practiceSet: clamped);
+        },
+      ),
+      GoRoute(
+        path: '/taxi-lagar-review',
+        builder: (context, state) {
+          final ps = int.tryParse(state.uri.queryParameters['practiceSet'] ?? '1') ?? 1;
+          final clamped = ps.clamp(1, kLagstiftningPracticeSetCount);
+          return TaxiLagarReviewResultsScreen(practiceSet: clamped);
+        },
+      ),
+      GoRoute(
+        path: '/taxi-karta-continue',
+        builder: (context, state) {
+          final ps = int.tryParse(state.uri.queryParameters['practiceSet'] ?? '1') ?? 1;
+          final clamped = ps.clamp(1, kKartaPracticeSetCount);
+          return TaxiKartaContinuePracticeScreen(practiceSet: clamped);
+        },
+      ),
+      GoRoute(
+        path: '/taxi-karta-review',
+        builder: (context, state) {
+          final ps = int.tryParse(state.uri.queryParameters['practiceSet'] ?? '1') ?? 1;
+          final clamped = ps.clamp(1, kKartaPracticeSetCount);
+          return TaxiKartaReviewResultsScreen(practiceSet: clamped);
+        },
+      ),
+      GoRoute(
+        path: '/taxi-mock-exams',
+        builder: (context, state) => const TaxiMockExamsScreen(),
       ),
     ],
   );
