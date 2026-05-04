@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -35,17 +37,23 @@ class TaxiBankImage extends StatelessWidget {
       return _placeholder();
     }
 
-    final future = TaxiStorageImageCache.instance.getDownloadUrlForAssetPath(path);
+    final future = TaxiStorageImageCache.instance.getBankImageBytesForAssetPath(path);
 
-    return FutureBuilder<String?>(
+    return FutureBuilder<Uint8List?>(
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _loading();
         }
-        final u = snapshot.data?.trim();
-        if (u != null && u.isNotEmpty) {
-          return _cachedNetwork(u);
+        final bytes = snapshot.data;
+        if (bytes != null && bytes.isNotEmpty) {
+          return Image.memory(
+            bytes,
+            fit: fit,
+            width: width,
+            height: height,
+            semanticLabel: _label,
+          );
         }
         return Image.asset(
           path,
