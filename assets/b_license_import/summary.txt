@@ -1,0 +1,10 @@
+Total pages: 232
+Total question entries: 900
+Entries with image(s): 360
+Entries with detected correct option: 493
+  Font-based: 92
+  Visual fallback: 401
+Entries missing detected correct option: 407
+JSON: /Users/waqas/Development/Road Master/assets/b_license_import/b_questions_extracted.json
+Markdown: /Users/waqas/Development/Road Master/assets/b_license_import/b_questions_extracted.md
+Image folder: /Users/waqas/Development/Road Master/assets/b_license_import/question_images

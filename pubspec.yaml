@@ -75,6 +75,12 @@ flutter:
     - assets/images/
     - assets/taxi/
     - assets/taxi/bank/questions.json
+    # Theory B: extracted from PDF (local); JSON + images for future app integration
+    - assets/b_license_import/b_questions_extracted.json
+    - assets/b_license_import/question_image_map.json
+    - assets/b_license_import/b_questions_extracted.md
+    - assets/b_license_import/summary.txt
+    - assets/b_license_import/question_images/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

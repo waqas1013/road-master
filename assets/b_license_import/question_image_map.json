@@ -1,0 +1,1163 @@
+{
+  "_meta": {
+    "source": "b_questions_extracted.json",
+    "description": "Maps question id -> Flutter asset paths for PNGs (order preserved per question).",
+    "questions_with_images": 360,
+    "asset_prefix": "assets/b_license_import/question_images/"
+  },
+  "by_question_id": {
+    "q005_occ001": [
+      "assets/b_license_import/question_images/q005_occ001_img1.png"
+    ],
+    "q007_occ001": [
+      "assets/b_license_import/question_images/q007_occ001_img1.png",
+      "assets/b_license_import/question_images/q007_occ001_img2.png"
+    ],
+    "q008_occ001": [
+      "assets/b_license_import/question_images/q008_occ001_img1.png"
+    ],
+    "q009_occ001": [
+      "assets/b_license_import/question_images/q009_occ001_img1.png"
+    ],
+    "q012_occ001": [
+      "assets/b_license_import/question_images/q012_occ001_img1.png"
+    ],
+    "q015_occ001": [
+      "assets/b_license_import/question_images/q015_occ001_img1.png"
+    ],
+    "q017_occ001": [
+      "assets/b_license_import/question_images/q017_occ001_img1.png",
+      "assets/b_license_import/question_images/q017_occ001_img2.png"
+    ],
+    "q019_occ001": [
+      "assets/b_license_import/question_images/q019_occ001_img1.png",
+      "assets/b_license_import/question_images/q019_occ001_img2.png"
+    ],
+    "q020_occ001": [
+      "assets/b_license_import/question_images/q020_occ001_img1.png"
+    ],
+    "q022_occ001": [
+      "assets/b_license_import/question_images/q022_occ001_img1.png"
+    ],
+    "q023_occ001": [
+      "assets/b_license_import/question_images/q023_occ001_img1.png"
+    ],
+    "q025_occ001": [
+      "assets/b_license_import/question_images/q025_occ001_img1.png",
+      "assets/b_license_import/question_images/q025_occ001_img2.png"
+    ],
+    "q027_occ001": [
+      "assets/b_license_import/question_images/q027_occ001_img1.png"
+    ],
+    "q028_occ001": [
+      "assets/b_license_import/question_images/q028_occ001_img1.png"
+    ],
+    "q033_occ001": [
+      "assets/b_license_import/question_images/q033_occ001_img1.png"
+    ],
+    "q035_occ001": [
+      "assets/b_license_import/question_images/q035_occ001_img1.png"
+    ],
+    "q036_occ001": [
+      "assets/b_license_import/question_images/q036_occ001_img1.png"
+    ],
+    "q038_occ001": [
+      "assets/b_license_import/question_images/q038_occ001_img1.png"
+    ],
+    "q043_occ001": [
+      "assets/b_license_import/question_images/q043_occ001_img1.png",
+      "assets/b_license_import/question_images/q043_occ001_img2.png"
+    ],
+    "q046_occ001": [
+      "assets/b_license_import/question_images/q046_occ001_img1.png",
+      "assets/b_license_import/question_images/q046_occ001_img2.png"
+    ],
+    "q048_occ001": [
+      "assets/b_license_import/question_images/q048_occ001_img1.png",
+      "assets/b_license_import/question_images/q048_occ001_img2.png"
+    ],
+    "q051_occ001": [
+      "assets/b_license_import/question_images/q051_occ001_img1.png",
+      "assets/b_license_import/question_images/q051_occ001_img2.png"
+    ],
+    "q052_occ001": [
+      "assets/b_license_import/question_images/q052_occ001_img1.png"
+    ],
+    "q053_occ001": [
+      "assets/b_license_import/question_images/q053_occ001_img1.png"
+    ],
+    "q054_occ001": [
+      "assets/b_license_import/question_images/q054_occ001_img1.png"
+    ],
+    "q056_occ001": [
+      "assets/b_license_import/question_images/q056_occ001_img1.png"
+    ],
+    "q061_occ001": [
+      "assets/b_license_import/question_images/q061_occ001_img1.png"
+    ],
+    "q062_occ001": [
+      "assets/b_license_import/question_images/q062_occ001_img1.png"
+    ],
+    "q065_occ001": [
+      "assets/b_license_import/question_images/q065_occ001_img1.png"
+    ],
+    "q067_occ001": [
+      "assets/b_license_import/question_images/q067_occ001_img1.png",
+      "assets/b_license_import/question_images/q067_occ001_img2.png"
+    ],
+    "q069_occ001": [
+      "assets/b_license_import/question_images/q069_occ001_img1.png"
+    ],
+    "q070_occ001": [
+      "assets/b_license_import/question_images/q070_occ001_img1.png"
+    ],
+    "q002_occ002": [
+      "assets/b_license_import/question_images/q002_occ002_img1.png"
+    ],
+    "q003_occ002": [
+      "assets/b_license_import/question_images/q003_occ002_img1.png"
+    ],
+    "q004_occ002": [
+      "assets/b_license_import/question_images/q004_occ002_img1.png"
+    ],
+    "q005_occ002": [
+      "assets/b_license_import/question_images/q005_occ002_img1.png"
+    ],
+    "q006_occ002": [
+      "assets/b_license_import/question_images/q006_occ002_img1.png"
+    ],
+    "q008_occ002": [
+      "assets/b_license_import/question_images/q008_occ002_img1.png"
+    ],
+    "q009_occ002": [
+      "assets/b_license_import/question_images/q009_occ002_img1.png"
+    ],
+    "q010_occ002": [
+      "assets/b_license_import/question_images/q010_occ002_img1.png"
+    ],
+    "q011_occ002": [
+      "assets/b_license_import/question_images/q011_occ002_img1.png"
+    ],
+    "q013_occ002": [
+      "assets/b_license_import/question_images/q013_occ002_img1.png",
+      "assets/b_license_import/question_images/q013_occ002_img2.png"
+    ],
+    "q015_occ002": [
+      "assets/b_license_import/question_images/q015_occ002_img1.png",
+      "assets/b_license_import/question_images/q015_occ002_img2.png"
+    ],
+    "q016_occ002": [
+      "assets/b_license_import/question_images/q016_occ002_img1.png"
+    ],
+    "q017_occ002": [
+      "assets/b_license_import/question_images/q017_occ002_img1.png"
+    ],
+    "q018_occ002": [
+      "assets/b_license_import/question_images/q018_occ002_img1.png"
+    ],
+    "q023_occ002": [
+      "assets/b_license_import/question_images/q023_occ002_img1.png"
+    ],
+    "q024_occ002": [
+      "assets/b_license_import/question_images/q024_occ002_img1.png"
+    ],
+    "q027_occ002": [
+      "assets/b_license_import/question_images/q027_occ002_img1.png"
+    ],
+    "q028_occ002": [
+      "assets/b_license_import/question_images/q028_occ002_img1.png"
+    ],
+    "q031_occ002": [
+      "assets/b_license_import/question_images/q031_occ002_img1.png",
+      "assets/b_license_import/question_images/q031_occ002_img2.png"
+    ],
+    "q032_occ002": [
+      "assets/b_license_import/question_images/q032_occ002_img1.png"
+    ],
+    "q033_occ002": [
+      "assets/b_license_import/question_images/q033_occ002_img1.png"
+    ],
+    "q034_occ002": [
+      "assets/b_license_import/question_images/q034_occ002_img1.png"
+    ],
+    "q037_occ002": [
+      "assets/b_license_import/question_images/q037_occ002_img1.png",
+      "assets/b_license_import/question_images/q037_occ002_img2.png"
+    ],
+    "q038_occ002": [
+      "assets/b_license_import/question_images/q038_occ002_img1.png"
+    ],
+    "q039_occ002": [
+      "assets/b_license_import/question_images/q039_occ002_img1.png"
+    ],
+    "q040_occ002": [
+      "assets/b_license_import/question_images/q040_occ002_img1.png"
+    ],
+    "q042_occ002": [
+      "assets/b_license_import/question_images/q042_occ002_img1.png"
+    ],
+    "q043_occ002": [
+      "assets/b_license_import/question_images/q043_occ002_img1.png"
+    ],
+    "q051_occ002": [
+      "assets/b_license_import/question_images/q051_occ002_img1.png"
+    ],
+    "q053_occ002": [
+      "assets/b_license_import/question_images/q053_occ002_img1.png"
+    ],
+    "q054_occ002": [
+      "assets/b_license_import/question_images/q054_occ002_img1.png"
+    ],
+    "q057_occ002": [
+      "assets/b_license_import/question_images/q057_occ002_img1.png",
+      "assets/b_license_import/question_images/q057_occ002_img2.png"
+    ],
+    "q060_occ002": [
+      "assets/b_license_import/question_images/q060_occ002_img1.png"
+    ],
+    "q065_occ002": [
+      "assets/b_license_import/question_images/q065_occ002_img1.png"
+    ],
+    "q066_occ002": [
+      "assets/b_license_import/question_images/q066_occ002_img1.png"
+    ],
+    "q070_occ002": [
+      "assets/b_license_import/question_images/q070_occ002_img1.png",
+      "assets/b_license_import/question_images/q070_occ002_img2.png"
+    ],
+    "q001_occ004": [
+      "assets/b_license_import/question_images/q001_occ004_img1.png"
+    ],
+    "q002_occ003": [
+      "assets/b_license_import/question_images/q002_occ003_img1.png"
+    ],
+    "q004_occ003": [
+      "assets/b_license_import/question_images/q004_occ003_img1.png"
+    ],
+    "q005_occ003": [
+      "assets/b_license_import/question_images/q005_occ003_img1.png"
+    ],
+    "q007_occ003": [
+      "assets/b_license_import/question_images/q007_occ003_img1.png",
+      "assets/b_license_import/question_images/q007_occ003_img2.png"
+    ],
+    "q010_occ003": [
+      "assets/b_license_import/question_images/q010_occ003_img1.png",
+      "assets/b_license_import/question_images/q010_occ003_img2.png"
+    ],
+    "q011_occ003": [
+      "assets/b_license_import/question_images/q011_occ003_img1.png"
+    ],
+    "q013_occ003": [
+      "assets/b_license_import/question_images/q013_occ003_img1.png",
+      "assets/b_license_import/question_images/q013_occ003_img2.png"
+    ],
+    "q015_occ003": [
+      "assets/b_license_import/question_images/q015_occ003_img1.png"
+    ],
+    "q016_occ003": [
+      "assets/b_license_import/question_images/q016_occ003_img1.png"
+    ],
+    "q018_occ003": [
+      "assets/b_license_import/question_images/q018_occ003_img1.png",
+      "assets/b_license_import/question_images/q018_occ003_img2.png"
+    ],
+    "q019_occ003": [
+      "assets/b_license_import/question_images/q019_occ003_img1.png"
+    ],
+    "q020_occ003": [
+      "assets/b_license_import/question_images/q020_occ003_img1.png"
+    ],
+    "q023_occ003": [
+      "assets/b_license_import/question_images/q023_occ003_img1.png"
+    ],
+    "q026_occ003": [
+      "assets/b_license_import/question_images/q026_occ003_img1.png"
+    ],
+    "q027_occ003": [
+      "assets/b_license_import/question_images/q027_occ003_img1.png"
+    ],
+    "q029_occ003": [
+      "assets/b_license_import/question_images/q029_occ003_img1.png",
+      "assets/b_license_import/question_images/q029_occ003_img2.png"
+    ],
+    "q031_occ003": [
+      "assets/b_license_import/question_images/q031_occ003_img1.png"
+    ],
+    "q034_occ003": [
+      "assets/b_license_import/question_images/q034_occ003_img1.png"
+    ],
+    "q035_occ003": [
+      "assets/b_license_import/question_images/q035_occ003_img1.png"
+    ],
+    "q036_occ003": [
+      "assets/b_license_import/question_images/q036_occ003_img1.png"
+    ],
+    "q039_occ003": [
+      "assets/b_license_import/question_images/q039_occ003_img1.png"
+    ],
+    "q041_occ003": [
+      "assets/b_license_import/question_images/q041_occ003_img1.png"
+    ],
+    "q048_occ003": [
+      "assets/b_license_import/question_images/q048_occ003_img1.png"
+    ],
+    "q050_occ003": [
+      "assets/b_license_import/question_images/q050_occ003_img1.png"
+    ],
+    "q051_occ003": [
+      "assets/b_license_import/question_images/q051_occ003_img1.png"
+    ],
+    "q053_occ003": [
+      "assets/b_license_import/question_images/q053_occ003_img1.png"
+    ],
+    "q057_occ003": [
+      "assets/b_license_import/question_images/q057_occ003_img1.png"
+    ],
+    "q059_occ003": [
+      "assets/b_license_import/question_images/q059_occ003_img1.png"
+    ],
+    "q062_occ003": [
+      "assets/b_license_import/question_images/q062_occ003_img1.png"
+    ],
+    "q064_occ003": [
+      "assets/b_license_import/question_images/q064_occ003_img1.png"
+    ],
+    "q066_occ003": [
+      "assets/b_license_import/question_images/q066_occ003_img1.png"
+    ],
+    "q068_occ003": [
+      "assets/b_license_import/question_images/q068_occ003_img1.png"
+    ],
+    "q069_occ003": [
+      "assets/b_license_import/question_images/q069_occ003_img1.png"
+    ],
+    "q003_occ004": [
+      "assets/b_license_import/question_images/q003_occ004_img1.png"
+    ],
+    "q006_occ004": [
+      "assets/b_license_import/question_images/q006_occ004_img1.png"
+    ],
+    "q007_occ004": [
+      "assets/b_license_import/question_images/q007_occ004_img1.png"
+    ],
+    "q009_occ004": [
+      "assets/b_license_import/question_images/q009_occ004_img1.png"
+    ],
+    "q010_occ004": [
+      "assets/b_license_import/question_images/q010_occ004_img1.png"
+    ],
+    "q013_occ004": [
+      "assets/b_license_import/question_images/q013_occ004_img1.png"
+    ],
+    "q015_occ004": [
+      "assets/b_license_import/question_images/q015_occ004_img1.png"
+    ],
+    "q019_occ004": [
+      "assets/b_license_import/question_images/q019_occ004_img1.png"
+    ],
+    "q024_occ004": [
+      "assets/b_license_import/question_images/q024_occ004_img1.png",
+      "assets/b_license_import/question_images/q024_occ004_img2.png"
+    ],
+    "q031_occ004": [
+      "assets/b_license_import/question_images/q031_occ004_img1.png"
+    ],
+    "q034_occ004": [
+      "assets/b_license_import/question_images/q034_occ004_img1.png"
+    ],
+    "q048_occ004": [
+      "assets/b_license_import/question_images/q048_occ004_img1.png"
+    ],
+    "q049_occ004": [
+      "assets/b_license_import/question_images/q049_occ004_img1.png"
+    ],
+    "q050_occ004": [
+      "assets/b_license_import/question_images/q050_occ004_img1.png"
+    ],
+    "q053_occ004": [
+      "assets/b_license_import/question_images/q053_occ004_img1.png"
+    ],
+    "q062_occ004": [
+      "assets/b_license_import/question_images/q062_occ004_img1.png"
+    ],
+    "q069_occ004": [
+      "assets/b_license_import/question_images/q069_occ004_img1.png"
+    ],
+    "q011_occ005": [
+      "assets/b_license_import/question_images/q011_occ005_img1.png"
+    ],
+    "q014_occ005": [
+      "assets/b_license_import/question_images/q014_occ005_img1.png"
+    ],
+    "q025_occ005": [
+      "assets/b_license_import/question_images/q025_occ005_img1.png"
+    ],
+    "q036_occ005": [
+      "assets/b_license_import/question_images/q036_occ005_img1.png"
+    ],
+    "q039_occ005": [
+      "assets/b_license_import/question_images/q039_occ005_img1.png"
+    ],
+    "q060_occ005": [
+      "assets/b_license_import/question_images/q060_occ005_img1.png"
+    ],
+    "q066_occ005": [
+      "assets/b_license_import/question_images/q066_occ005_img1.png"
+    ],
+    "q069_occ005": [
+      "assets/b_license_import/question_images/q069_occ005_img1.png"
+    ],
+    "q001_occ007": [
+      "assets/b_license_import/question_images/q001_occ007_img1.png"
+    ],
+    "q004_occ006": [
+      "assets/b_license_import/question_images/q004_occ006_img1.png"
+    ],
+    "q007_occ006": [
+      "assets/b_license_import/question_images/q007_occ006_img1.png"
+    ],
+    "q009_occ006": [
+      "assets/b_license_import/question_images/q009_occ006_img1.png"
+    ],
+    "q010_occ006": [
+      "assets/b_license_import/question_images/q010_occ006_img1.png"
+    ],
+    "q012_occ006": [
+      "assets/b_license_import/question_images/q012_occ006_img1.png"
+    ],
+    "q014_occ006": [
+      "assets/b_license_import/question_images/q014_occ006_img1.png"
+    ],
+    "q016_occ006": [
+      "assets/b_license_import/question_images/q016_occ006_img1.png"
+    ],
+    "q018_occ006": [
+      "assets/b_license_import/question_images/q018_occ006_img1.png",
+      "assets/b_license_import/question_images/q018_occ006_img2.png"
+    ],
+    "q021_occ006": [
+      "assets/b_license_import/question_images/q021_occ006_img1.png"
+    ],
+    "q022_occ006": [
+      "assets/b_license_import/question_images/q022_occ006_img1.png"
+    ],
+    "q026_occ006": [
+      "assets/b_license_import/question_images/q026_occ006_img1.png",
+      "assets/b_license_import/question_images/q026_occ006_img2.png"
+    ],
+    "q028_occ006": [
+      "assets/b_license_import/question_images/q028_occ006_img1.png",
+      "assets/b_license_import/question_images/q028_occ006_img2.png"
+    ],
+    "q032_occ006": [
+      "assets/b_license_import/question_images/q032_occ006_img1.png",
+      "assets/b_license_import/question_images/q032_occ006_img2.png"
+    ],
+    "q005_occ007": [
+      "assets/b_license_import/question_images/q005_occ007_img1.png"
+    ],
+    "q034_occ006": [
+      "assets/b_license_import/question_images/q034_occ006_img1.png"
+    ],
+    "q035_occ006": [
+      "assets/b_license_import/question_images/q035_occ006_img1.png"
+    ],
+    "q039_occ006": [
+      "assets/b_license_import/question_images/q039_occ006_img1.png"
+    ],
+    "q044_occ006": [
+      "assets/b_license_import/question_images/q044_occ006_img1.png"
+    ],
+    "q045_occ006": [
+      "assets/b_license_import/question_images/q045_occ006_img1.png"
+    ],
+    "q047_occ006": [
+      "assets/b_license_import/question_images/q047_occ006_img1.png"
+    ],
+    "q049_occ006": [
+      "assets/b_license_import/question_images/q049_occ006_img1.png"
+    ],
+    "q051_occ006": [
+      "assets/b_license_import/question_images/q051_occ006_img1.png",
+      "assets/b_license_import/question_images/q051_occ006_img2.png"
+    ],
+    "q053_occ006": [
+      "assets/b_license_import/question_images/q053_occ006_img1.png",
+      "assets/b_license_import/question_images/q053_occ006_img2.png"
+    ],
+    "q058_occ006": [
+      "assets/b_license_import/question_images/q058_occ006_img1.png",
+      "assets/b_license_import/question_images/q058_occ006_img2.png"
+    ],
+    "q061_occ006": [
+      "assets/b_license_import/question_images/q061_occ006_img1.png"
+    ],
+    "q064_occ006": [
+      "assets/b_license_import/question_images/q064_occ006_img1.png"
+    ],
+    "q066_occ006": [
+      "assets/b_license_import/question_images/q066_occ006_img1.png",
+      "assets/b_license_import/question_images/q066_occ006_img2.png"
+    ],
+    "q067_occ006": [
+      "assets/b_license_import/question_images/q067_occ006_img1.png"
+    ],
+    "q070_occ006": [
+      "assets/b_license_import/question_images/q070_occ006_img1.png"
+    ],
+    "q001_occ008": [
+      "assets/b_license_import/question_images/q001_occ008_img1.png"
+    ],
+    "q002_occ007": [
+      "assets/b_license_import/question_images/q002_occ007_img1.png"
+    ],
+    "q005_occ008": [
+      "assets/b_license_import/question_images/q005_occ008_img1.png",
+      "assets/b_license_import/question_images/q005_occ008_img2.png"
+    ],
+    "q007_occ007": [
+      "assets/b_license_import/question_images/q007_occ007_img1.png",
+      "assets/b_license_import/question_images/q007_occ007_img2.png"
+    ],
+    "q008_occ007": [
+      "assets/b_license_import/question_images/q008_occ007_img1.png"
+    ],
+    "q009_occ007": [
+      "assets/b_license_import/question_images/q009_occ007_img1.png"
+    ],
+    "q011_occ007": [
+      "assets/b_license_import/question_images/q011_occ007_img1.png"
+    ],
+    "q013_occ007": [
+      "assets/b_license_import/question_images/q013_occ007_img1.png",
+      "assets/b_license_import/question_images/q013_occ007_img2.png"
+    ],
+    "q014_occ007": [
+      "assets/b_license_import/question_images/q014_occ007_img1.png"
+    ],
+    "q015_occ007": [
+      "assets/b_license_import/question_images/q015_occ007_img1.png"
+    ],
+    "q016_occ007": [
+      "assets/b_license_import/question_images/q016_occ007_img1.png"
+    ],
+    "q018_occ007": [
+      "assets/b_license_import/question_images/q018_occ007_img1.png",
+      "assets/b_license_import/question_images/q018_occ007_img2.png"
+    ],
+    "q020_occ007": [
+      "assets/b_license_import/question_images/q020_occ007_img1.png",
+      "assets/b_license_import/question_images/q020_occ007_img2.png"
+    ],
+    "q021_occ007": [
+      "assets/b_license_import/question_images/q021_occ007_img1.png"
+    ],
+    "q022_occ007": [
+      "assets/b_license_import/question_images/q022_occ007_img1.png"
+    ],
+    "q023_occ007": [
+      "assets/b_license_import/question_images/q023_occ007_img1.png"
+    ],
+    "q026_occ007": [
+      "assets/b_license_import/question_images/q026_occ007_img1.png",
+      "assets/b_license_import/question_images/q026_occ007_img2.png"
+    ],
+    "q027_occ007": [
+      "assets/b_license_import/question_images/q027_occ007_img1.png"
+    ],
+    "q028_occ007": [
+      "assets/b_license_import/question_images/q028_occ007_img1.png"
+    ],
+    "q029_occ007": [
+      "assets/b_license_import/question_images/q029_occ007_img1.png"
+    ],
+    "q031_occ007": [
+      "assets/b_license_import/question_images/q031_occ007_img1.png"
+    ],
+    "q033_occ007": [
+      "assets/b_license_import/question_images/q033_occ007_img1.png"
+    ],
+    "q035_occ007": [
+      "assets/b_license_import/question_images/q035_occ007_img1.png",
+      "assets/b_license_import/question_images/q035_occ007_img2.png"
+    ],
+    "q038_occ007": [
+      "assets/b_license_import/question_images/q038_occ007_img1.png"
+    ],
+    "q040_occ007": [
+      "assets/b_license_import/question_images/q040_occ007_img1.png"
+    ],
+    "q042_occ007": [
+      "assets/b_license_import/question_images/q042_occ007_img1.png",
+      "assets/b_license_import/question_images/q042_occ007_img2.png"
+    ],
+    "q044_occ007": [
+      "assets/b_license_import/question_images/q044_occ007_img1.png"
+    ],
+    "q053_occ007": [
+      "assets/b_license_import/question_images/q053_occ007_img1.png"
+    ],
+    "q054_occ007": [
+      "assets/b_license_import/question_images/q054_occ007_img1.png"
+    ],
+    "q056_occ007": [
+      "assets/b_license_import/question_images/q056_occ007_img1.png",
+      "assets/b_license_import/question_images/q056_occ007_img2.png"
+    ],
+    "q060_occ007": [
+      "assets/b_license_import/question_images/q060_occ007_img1.png"
+    ],
+    "q062_occ007": [
+      "assets/b_license_import/question_images/q062_occ007_img1.png"
+    ],
+    "q064_occ007": [
+      "assets/b_license_import/question_images/q064_occ007_img1.png"
+    ],
+    "q066_occ007": [
+      "assets/b_license_import/question_images/q066_occ007_img1.png"
+    ],
+    "q068_occ007": [
+      "assets/b_license_import/question_images/q068_occ007_img1.png",
+      "assets/b_license_import/question_images/q068_occ007_img2.png"
+    ],
+    "q070_occ007": [
+      "assets/b_license_import/question_images/q070_occ007_img1.png"
+    ],
+    "q003_occ009": [
+      "assets/b_license_import/question_images/q003_occ009_img1.png"
+    ],
+    "q004_occ009": [
+      "assets/b_license_import/question_images/q004_occ009_img1.png"
+    ],
+    "q006_occ008": [
+      "assets/b_license_import/question_images/q006_occ008_img1.png"
+    ],
+    "q007_occ008": [
+      "assets/b_license_import/question_images/q007_occ008_img1.png"
+    ],
+    "q009_occ008": [
+      "assets/b_license_import/question_images/q009_occ008_img1.png",
+      "assets/b_license_import/question_images/q009_occ008_img2.png"
+    ],
+    "q013_occ008": [
+      "assets/b_license_import/question_images/q013_occ008_img1.png"
+    ],
+    "q014_occ008": [
+      "assets/b_license_import/question_images/q014_occ008_img1.png"
+    ],
+    "q016_occ008": [
+      "assets/b_license_import/question_images/q016_occ008_img1.png",
+      "assets/b_license_import/question_images/q016_occ008_img2.png"
+    ],
+    "q018_occ008": [
+      "assets/b_license_import/question_images/q018_occ008_img1.png"
+    ],
+    "q020_occ008": [
+      "assets/b_license_import/question_images/q020_occ008_img1.png"
+    ],
+    "q023_occ008": [
+      "assets/b_license_import/question_images/q023_occ008_img1.png"
+    ],
+    "q025_occ008": [
+      "assets/b_license_import/question_images/q025_occ008_img1.png"
+    ],
+    "q028_occ008": [
+      "assets/b_license_import/question_images/q028_occ008_img1.png"
+    ],
+    "q029_occ008": [
+      "assets/b_license_import/question_images/q029_occ008_img1.png"
+    ],
+    "q031_occ008": [
+      "assets/b_license_import/question_images/q031_occ008_img1.png",
+      "assets/b_license_import/question_images/q031_occ008_img2.png"
+    ],
+    "q034_occ008": [
+      "assets/b_license_import/question_images/q034_occ008_img1.png"
+    ],
+    "q036_occ008": [
+      "assets/b_license_import/question_images/q036_occ008_img1.png"
+    ],
+    "q038_occ008": [
+      "assets/b_license_import/question_images/q038_occ008_img1.png",
+      "assets/b_license_import/question_images/q038_occ008_img2.png"
+    ],
+    "q040_occ008": [
+      "assets/b_license_import/question_images/q040_occ008_img1.png",
+      "assets/b_license_import/question_images/q040_occ008_img2.png"
+    ],
+    "q041_occ008": [
+      "assets/b_license_import/question_images/q041_occ008_img1.png"
+    ],
+    "q043_occ008": [
+      "assets/b_license_import/question_images/q043_occ008_img1.png"
+    ],
+    "q044_occ008": [
+      "assets/b_license_import/question_images/q044_occ008_img1.png"
+    ],
+    "q046_occ008": [
+      "assets/b_license_import/question_images/q046_occ008_img1.png"
+    ],
+    "q047_occ008": [
+      "assets/b_license_import/question_images/q047_occ008_img1.png"
+    ],
+    "q051_occ008": [
+      "assets/b_license_import/question_images/q051_occ008_img1.png"
+    ],
+    "q053_occ008": [
+      "assets/b_license_import/question_images/q053_occ008_img1.png"
+    ],
+    "q056_occ008": [
+      "assets/b_license_import/question_images/q056_occ008_img1.png",
+      "assets/b_license_import/question_images/q056_occ008_img2.png"
+    ],
+    "q058_occ008": [
+      "assets/b_license_import/question_images/q058_occ008_img1.png",
+      "assets/b_license_import/question_images/q058_occ008_img2.png"
+    ],
+    "q059_occ008": [
+      "assets/b_license_import/question_images/q059_occ008_img1.png"
+    ],
+    "q061_occ008": [
+      "assets/b_license_import/question_images/q061_occ008_img1.png",
+      "assets/b_license_import/question_images/q061_occ008_img2.png"
+    ],
+    "q063_occ008": [
+      "assets/b_license_import/question_images/q063_occ008_img1.png"
+    ],
+    "q064_occ008": [
+      "assets/b_license_import/question_images/q064_occ008_img1.png"
+    ],
+    "q067_occ008": [
+      "assets/b_license_import/question_images/q067_occ008_img1.png"
+    ],
+    "q069_occ008": [
+      "assets/b_license_import/question_images/q069_occ008_img1.png"
+    ],
+    "q003_occ010": [
+      "assets/b_license_import/question_images/q003_occ010_img1.png"
+    ],
+    "q004_occ010": [
+      "assets/b_license_import/question_images/q004_occ010_img1.png"
+    ],
+    "q008_occ009": [
+      "assets/b_license_import/question_images/q008_occ009_img1.png"
+    ],
+    "q010_occ009": [
+      "assets/b_license_import/question_images/q010_occ009_img1.png",
+      "assets/b_license_import/question_images/q010_occ009_img2.png"
+    ],
+    "q013_occ009": [
+      "assets/b_license_import/question_images/q013_occ009_img1.png"
+    ],
+    "q014_occ009": [
+      "assets/b_license_import/question_images/q014_occ009_img1.png"
+    ],
+    "q016_occ009": [
+      "assets/b_license_import/question_images/q016_occ009_img1.png",
+      "assets/b_license_import/question_images/q016_occ009_img2.png"
+    ],
+    "q018_occ009": [
+      "assets/b_license_import/question_images/q018_occ009_img1.png"
+    ],
+    "q020_occ009": [
+      "assets/b_license_import/question_images/q020_occ009_img1.png"
+    ],
+    "q022_occ009": [
+      "assets/b_license_import/question_images/q022_occ009_img1.png",
+      "assets/b_license_import/question_images/q022_occ009_img2.png"
+    ],
+    "q027_occ009": [
+      "assets/b_license_import/question_images/q027_occ009_img1.png"
+    ],
+    "q028_occ009": [
+      "assets/b_license_import/question_images/q028_occ009_img1.png"
+    ],
+    "q032_occ009": [
+      "assets/b_license_import/question_images/q032_occ009_img1.png",
+      "assets/b_license_import/question_images/q032_occ009_img2.png"
+    ],
+    "q034_occ009": [
+      "assets/b_license_import/question_images/q034_occ009_img1.png"
+    ],
+    "q036_occ009": [
+      "assets/b_license_import/question_images/q036_occ009_img1.png"
+    ],
+    "q038_occ009": [
+      "assets/b_license_import/question_images/q038_occ009_img1.png"
+    ],
+    "q039_occ009": [
+      "assets/b_license_import/question_images/q039_occ009_img1.png"
+    ],
+    "q042_occ009": [
+      "assets/b_license_import/question_images/q042_occ009_img1.png",
+      "assets/b_license_import/question_images/q042_occ009_img2.png"
+    ],
+    "q046_occ009": [
+      "assets/b_license_import/question_images/q046_occ009_img1.png"
+    ],
+    "q047_occ009": [
+      "assets/b_license_import/question_images/q047_occ009_img1.png"
+    ],
+    "q050_occ009": [
+      "assets/b_license_import/question_images/q050_occ009_img1.png"
+    ],
+    "q051_occ009": [
+      "assets/b_license_import/question_images/q051_occ009_img1.png"
+    ],
+    "q053_occ009": [
+      "assets/b_license_import/question_images/q053_occ009_img1.png"
+    ],
+    "q054_occ009": [
+      "assets/b_license_import/question_images/q054_occ009_img1.png"
+    ],
+    "q059_occ009": [
+      "assets/b_license_import/question_images/q059_occ009_img1.png"
+    ],
+    "q060_occ009": [
+      "assets/b_license_import/question_images/q060_occ009_img1.png"
+    ],
+    "q062_occ009": [
+      "assets/b_license_import/question_images/q062_occ009_img1.png"
+    ],
+    "q064_occ009": [
+      "assets/b_license_import/question_images/q064_occ009_img1.png"
+    ],
+    "q067_occ009": [
+      "assets/b_license_import/question_images/q067_occ009_img1.png"
+    ],
+    "q069_occ009": [
+      "assets/b_license_import/question_images/q069_occ009_img1.png",
+      "assets/b_license_import/question_images/q069_occ009_img2.png"
+    ],
+    "q070_occ009": [
+      "assets/b_license_import/question_images/q070_occ009_img1.png"
+    ],
+    "q007_occ010": [
+      "assets/b_license_import/question_images/q007_occ010_img1.png"
+    ],
+    "q009_occ010": [
+      "assets/b_license_import/question_images/q009_occ010_img1.png"
+    ],
+    "q014_occ010": [
+      "assets/b_license_import/question_images/q014_occ010_img1.png"
+    ],
+    "q021_occ010": [
+      "assets/b_license_import/question_images/q021_occ010_img1.png"
+    ],
+    "q022_occ010": [
+      "assets/b_license_import/question_images/q022_occ010_img1.png"
+    ],
+    "q025_occ010": [
+      "assets/b_license_import/question_images/q025_occ010_img1.png"
+    ],
+    "q028_occ010": [
+      "assets/b_license_import/question_images/q028_occ010_img1.png"
+    ],
+    "q030_occ010": [
+      "assets/b_license_import/question_images/q030_occ010_img1.png"
+    ],
+    "q032_occ010": [
+      "assets/b_license_import/question_images/q032_occ010_img1.png"
+    ],
+    "q034_occ010": [
+      "assets/b_license_import/question_images/q034_occ010_img1.png",
+      "assets/b_license_import/question_images/q034_occ010_img2.png"
+    ],
+    "q037_occ010": [
+      "assets/b_license_import/question_images/q037_occ010_img1.png",
+      "assets/b_license_import/question_images/q037_occ010_img2.png"
+    ],
+    "q043_occ010": [
+      "assets/b_license_import/question_images/q043_occ010_img1.png"
+    ],
+    "q046_occ010": [
+      "assets/b_license_import/question_images/q046_occ010_img1.png"
+    ],
+    "q047_occ010": [
+      "assets/b_license_import/question_images/q047_occ010_img1.png"
+    ],
+    "q049_occ010": [
+      "assets/b_license_import/question_images/q049_occ010_img1.png"
+    ],
+    "q061_occ010": [
+      "assets/b_license_import/question_images/q061_occ010_img1.png"
+    ],
+    "q064_occ010": [
+      "assets/b_license_import/question_images/q064_occ010_img1.png"
+    ],
+    "q065_occ010": [
+      "assets/b_license_import/question_images/q065_occ010_img1.png"
+    ],
+    "q069_occ010": [
+      "assets/b_license_import/question_images/q069_occ010_img1.png"
+    ],
+    "q001_occ013": [
+      "assets/b_license_import/question_images/q001_occ013_img1.png"
+    ],
+    "q004_occ012": [
+      "assets/b_license_import/question_images/q004_occ012_img1.png"
+    ],
+    "q005_occ013": [
+      "assets/b_license_import/question_images/q005_occ013_img1.png"
+    ],
+    "q006_occ011": [
+      "assets/b_license_import/question_images/q006_occ011_img1.png"
+    ],
+    "q011_occ011": [
+      "assets/b_license_import/question_images/q011_occ011_img1.png"
+    ],
+    "q012_occ011": [
+      "assets/b_license_import/question_images/q012_occ011_img1.png"
+    ],
+    "q014_occ011": [
+      "assets/b_license_import/question_images/q014_occ011_img1.png"
+    ],
+    "q017_occ011": [
+      "assets/b_license_import/question_images/q017_occ011_img1.png"
+    ],
+    "q021_occ011": [
+      "assets/b_license_import/question_images/q021_occ011_img1.png"
+    ],
+    "q023_occ011": [
+      "assets/b_license_import/question_images/q023_occ011_img1.png"
+    ],
+    "q025_occ011": [
+      "assets/b_license_import/question_images/q025_occ011_img1.png"
+    ],
+    "q027_occ011": [
+      "assets/b_license_import/question_images/q027_occ011_img1.png",
+      "assets/b_license_import/question_images/q027_occ011_img2.png"
+    ],
+    "q029_occ011": [
+      "assets/b_license_import/question_images/q029_occ011_img1.png",
+      "assets/b_license_import/question_images/q029_occ011_img2.png"
+    ],
+    "q031_occ011": [
+      "assets/b_license_import/question_images/q031_occ011_img1.png",
+      "assets/b_license_import/question_images/q031_occ011_img2.png"
+    ],
+    "q033_occ011": [
+      "assets/b_license_import/question_images/q033_occ011_img1.png",
+      "assets/b_license_import/question_images/q033_occ011_img2.png"
+    ],
+    "q035_occ011": [
+      "assets/b_license_import/question_images/q035_occ011_img1.png"
+    ],
+    "q036_occ011": [
+      "assets/b_license_import/question_images/q036_occ011_img1.png"
+    ],
+    "q038_occ011": [
+      "assets/b_license_import/question_images/q038_occ011_img1.png"
+    ],
+    "q039_occ011": [
+      "assets/b_license_import/question_images/q039_occ011_img1.png"
+    ],
+    "q042_occ011": [
+      "assets/b_license_import/question_images/q042_occ011_img1.png",
+      "assets/b_license_import/question_images/q042_occ011_img2.png"
+    ],
+    "q045_occ011": [
+      "assets/b_license_import/question_images/q045_occ011_img1.png"
+    ],
+    "q047_occ011": [
+      "assets/b_license_import/question_images/q047_occ011_img1.png"
+    ],
+    "q049_occ011": [
+      "assets/b_license_import/question_images/q049_occ011_img1.png"
+    ],
+    "q051_occ011": [
+      "assets/b_license_import/question_images/q051_occ011_img1.png"
+    ],
+    "q053_occ011": [
+      "assets/b_license_import/question_images/q053_occ011_img1.png",
+      "assets/b_license_import/question_images/q053_occ011_img2.png"
+    ],
+    "q057_occ011": [
+      "assets/b_license_import/question_images/q057_occ011_img1.png"
+    ],
+    "q060_occ011": [
+      "assets/b_license_import/question_images/q060_occ011_img1.png"
+    ],
+    "q063_occ011": [
+      "assets/b_license_import/question_images/q063_occ011_img1.png"
+    ],
+    "q066_occ011": [
+      "assets/b_license_import/question_images/q066_occ011_img1.png",
+      "assets/b_license_import/question_images/q066_occ011_img2.png"
+    ],
+    "q001_occ016": [
+      "assets/b_license_import/question_images/q001_occ016_img1.png"
+    ],
+    "q003_occ014": [
+      "assets/b_license_import/question_images/q003_occ014_img1.png"
+    ],
+    "q005_occ014": [
+      "assets/b_license_import/question_images/q005_occ014_img1.png"
+    ],
+    "q006_occ012": [
+      "assets/b_license_import/question_images/q006_occ012_img1.png"
+    ],
+    "q008_occ012": [
+      "assets/b_license_import/question_images/q008_occ012_img1.png",
+      "assets/b_license_import/question_images/q008_occ012_img2.png"
+    ],
+    "q009_occ012": [
+      "assets/b_license_import/question_images/q009_occ012_img1.png"
+    ],
+    "q010_occ012": [
+      "assets/b_license_import/question_images/q010_occ012_img1.png"
+    ],
+    "q011_occ012": [
+      "assets/b_license_import/question_images/q011_occ012_img1.png"
+    ],
+    "q013_occ012": [
+      "assets/b_license_import/question_images/q013_occ012_img1.png"
+    ],
+    "q014_occ012": [
+      "assets/b_license_import/question_images/q014_occ012_img1.png"
+    ],
+    "q016_occ012": [
+      "assets/b_license_import/question_images/q016_occ012_img1.png",
+      "assets/b_license_import/question_images/q016_occ012_img2.png"
+    ],
+    "q018_occ012": [
+      "assets/b_license_import/question_images/q018_occ012_img1.png"
+    ],
+    "q019_occ012": [
+      "assets/b_license_import/question_images/q019_occ012_img1.png"
+    ],
+    "q021_occ012": [
+      "assets/b_license_import/question_images/q021_occ012_img1.png"
+    ],
+    "q022_occ012": [
+      "assets/b_license_import/question_images/q022_occ012_img1.png"
+    ],
+    "q024_occ012": [
+      "assets/b_license_import/question_images/q024_occ012_img1.png",
+      "assets/b_license_import/question_images/q024_occ012_img2.png"
+    ],
+    "q026_occ012": [
+      "assets/b_license_import/question_images/q026_occ012_img1.png",
+      "assets/b_license_import/question_images/q026_occ012_img2.png"
+    ],
+    "q028_occ012": [
+      "assets/b_license_import/question_images/q028_occ012_img1.png",
+      "assets/b_license_import/question_images/q028_occ012_img2.png"
+    ],
+    "q030_occ012": [
+      "assets/b_license_import/question_images/q030_occ012_img1.png",
+      "assets/b_license_import/question_images/q030_occ012_img2.png"
+    ],
+    "q033_occ012": [
+      "assets/b_license_import/question_images/q033_occ012_img1.png",
+      "assets/b_license_import/question_images/q033_occ012_img2.png"
+    ],
+    "q035_occ012": [
+      "assets/b_license_import/question_images/q035_occ012_img1.png"
+    ],
+    "q036_occ012": [
+      "assets/b_license_import/question_images/q036_occ012_img1.png"
+    ],
+    "q038_occ012": [
+      "assets/b_license_import/question_images/q038_occ012_img1.png"
+    ],
+    "q039_occ012": [
+      "assets/b_license_import/question_images/q039_occ012_img1.png"
+    ],
+    "q042_occ012": [
+      "assets/b_license_import/question_images/q042_occ012_img1.png"
+    ],
+    "q043_occ012": [
+      "assets/b_license_import/question_images/q043_occ012_img1.png"
+    ],
+    "q053_occ012": [
+      "assets/b_license_import/question_images/q053_occ012_img1.png",
+      "assets/b_license_import/question_images/q053_occ012_img2.png"
+    ],
+    "q057_occ012": [
+      "assets/b_license_import/question_images/q057_occ012_img1.png"
+    ],
+    "q058_occ012": [
+      "assets/b_license_import/question_images/q058_occ012_img1.png"
+    ],
+    "q067_occ012": [
+      "assets/b_license_import/question_images/q067_occ012_img1.png"
+    ],
+    "q069_occ012": [
+      "assets/b_license_import/question_images/q069_occ012_img1.png"
+    ],
+    "q001_occ017": [
+      "assets/b_license_import/question_images/q001_occ017_img1.png"
+    ],
+    "q002_occ013": [
+      "assets/b_license_import/question_images/q002_occ013_img1.png"
+    ],
+    "q005_occ015": [
+      "assets/b_license_import/question_images/q005_occ015_img1.png"
+    ],
+    "q006_occ013": [
+      "assets/b_license_import/question_images/q006_occ013_img1.png"
+    ],
+    "q008_occ013": [
+      "assets/b_license_import/question_images/q008_occ013_img1.png",
+      "assets/b_license_import/question_images/q008_occ013_img2.png"
+    ],
+    "q011_occ013": [
+      "assets/b_license_import/question_images/q011_occ013_img1.png"
+    ],
+    "q012_occ013": [
+      "assets/b_license_import/question_images/q012_occ013_img1.png"
+    ],
+    "q001_occ018": [
+      "assets/b_license_import/question_images/q001_occ018_img1.png"
+    ],
+    "q002_occ014": [
+      "assets/b_license_import/question_images/q002_occ014_img1.png"
+    ],
+    "q005_occ016": [
+      "assets/b_license_import/question_images/q005_occ016_img1.png",
+      "assets/b_license_import/question_images/q005_occ016_img2.png"
+    ],
+    "q006_occ014": [
+      "assets/b_license_import/question_images/q006_occ014_img1.png"
+    ],
+    "q007_occ014": [
+      "assets/b_license_import/question_images/q007_occ014_img1.png"
+    ],
+    "q008_occ014": [
+      "assets/b_license_import/question_images/q008_occ014_img1.png"
+    ],
+    "q011_occ014": [
+      "assets/b_license_import/question_images/q011_occ014_img1.png",
+      "assets/b_license_import/question_images/q011_occ014_img2.png"
+    ],
+    "q012_occ014": [
+      "assets/b_license_import/question_images/q012_occ014_img1.png"
+    ],
+    "q001_occ019": [
+      "assets/b_license_import/question_images/q001_occ019_img1.png"
+    ],
+    "q002_occ015": [
+      "assets/b_license_import/question_images/q002_occ015_img1.png"
+    ],
+    "q004_occ016": [
+      "assets/b_license_import/question_images/q004_occ016_img1.png"
+    ],
+    "q005_occ017": [
+      "assets/b_license_import/question_images/q005_occ017_img1.png"
+    ],
+    "q009_occ015": [
+      "assets/b_license_import/question_images/q009_occ015_img1.png"
+    ],
+    "q011_occ015": [
+      "assets/b_license_import/question_images/q011_occ015_img1.png"
+    ],
+    "q014_occ015": [
+      "assets/b_license_import/question_images/q014_occ015_img1.png"
+    ],
+    "q017_occ013": [
+      "assets/b_license_import/question_images/q017_occ013_img1.png"
+    ]
+  }
+}
