@@ -1,8 +1,10 @@
 # B-license import (`assets/b_license_import/`)
 
-**Scope:** This README describes **only** this folder — questions, images, and how to use them in code.
+**When to read this file:** only when you are **working in or with this folder** — integrating B theory, changing JSON/PNGs, or explaining how the extract maps to images and answers.
 
-**Flutter clone / machine setup:** read the **repository root** `README.md` first (`firebase_options.dart`, `flutter pub get`, etc.).
+**New clone / Flutter setup:** use **only** the **repository root** `README.md`. Do not rely on this file for `firebase_options.dart` or first-time `flutter run`.
+
+**Scope:** questions, images, JSON shape, and how to mirror the taxi bank pattern in code.
 
 ---
 

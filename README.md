@@ -6,22 +6,23 @@ Flutter app for **Swedish driving theory (license B)** and **taxi theory**: Fire
 
 ## Tell another AI (copy-paste)
 
-```
-Clone https://github.com/waqas1013/road-master.git.
+**New machine / first setup — root README only:**
 
-1. Open README.md at the repo root and follow it to install Flutter, run flutter pub get,
-   ios/pod install if needed, create lib/firebase_options.dart (FlutterFire or copy from a machine that builds),
-   then flutter run.
-
-2. Only if you change B-license theory files or wire them into the app: read
-   assets/b_license_import/README.md — it explains the JSON, images, and how to handle data like the taxi bank.
 ```
+Clone https://github.com/waqas1013/road-master.git, read README.md at the repo root only,
+and follow it until flutter run works (Flutter, flutter pub get, ios/pod install if needed,
+lib/firebase_options.dart via FlutterFire or copy).
+```
+
+**When the task involves `assets/b_license_import/`** (edit JSON/PNGs, wire B theory into UI, explain the extract):  
+have the assistant **also** read **`assets/b_license_import/README.md`**. Skip that file for unrelated work.
 
 ---
 
-## Setup (human or AI — read this file only)
+## Setup (human or AI — start here on a new clone)
 
-**Goal:** `flutter run` works on a clean clone after **`firebase_options.dart`** exists.
+**Goal:** `flutter run` works after **`firebase_options.dart`** exists.  
+You do **not** need the import-folder README for this step.
 
 ### Prerequisites
 
@@ -69,7 +70,7 @@ flutter run -d chrome --dart-define=RECAPTCHA_SITE_KEY=<key>
 |------|--------|
 | App code | `lib/` |
 | Taxi theory JSON loader pattern | `lib/data/taxi_question_bank.dart`, `assets/taxi/bank/questions.json` |
-| **B-license** PDF extract (JSON + PNGs + map) | **`assets/b_license_import/`** — **how it works:** **`assets/b_license_import/README.md`** |
+| **B-license** PDF extract | **`assets/b_license_import/`** — read **`assets/b_license_import/README.md`** only when your task touches this folder |
 
 ---
 
