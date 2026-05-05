@@ -1,69 +1,76 @@
-# B-license theory import (PDF extract)
+# B-license import (`assets/b_license_import/`)
 
-**For another AI or teammate:** reading **this whole file** is enough to integrate the data (coverage, file roles, JSON fields, images, answers, and Flutter paths). You do not need a separate pasted prompt.
+**Scope:** This README describes **only** this folder — questions, images, and how to use them in code.
 
-This folder holds **driving theory (B)** content extracted from a PDF. It is intended for **local development** (often untracked in Git). Flutter loads assets listed in `pubspec.yaml` under `assets/b_license_import/…`.
+**Flutter clone / machine setup:** read the **repository root** `README.md` first (`firebase_options.dart`, `flutter pub get`, etc.).
 
-## What we have (coverage)
+---
 
-| Item | Count / note |
-|------|----------------|
-| **Question entries in JSON** | **900** (one row per PDF occurrence) |
-| **With at least one image** | **360** (`has_image: true` and/or non-empty `image_files`) |
-| **Without image** | **540** (`has_image: false`, `image_files: []`) |
-| **With an inferred correct answer** | **493** — see `correct_option` + `correct_option_method` |
-| **Missing inferred correct answer** | **407** — no reliable bold-based detection; **do not assume** an answer |
+## Why this is in Git
 
-Correct answers were **inferred** from the PDF (bold option: font metadata first, then a visual “darkness” fallback). This is **not** the same as an official answer key; use `correct_option_confidence` and plan for **manual review** before high-stakes scoring.
+So **`git clone`** always restores the full extract (JSON + PNGs). No extra USB step; the repo is the backup.
 
-## Files
+---
 
-| File | Purpose |
-|------|---------|
-| `b_questions_extracted.json` | **Canonical** structured data for the app / code generation |
-| `question_image_map.json` | **Derived:** `by_question_id` → list of Flutter-ready asset paths (`assets/b_license_import/question_images/…`). Only questions **with** images appear (~360). Multi-image questions have several paths in **order**. Easiest file for another AI to resolve “which PNGs for this `id`?” without parsing absolute paths in the main JSON. |
-| `b_questions_extracted.md` | Human-readable dump for spot-checking |
-| `summary.txt` | Extraction stats (counts above) |
-| `question_images/` | PNG snippets; filenames tie to question `id` |
+## Files (short)
 
-## JSON shape (per question)
+| File / folder | Role |
+|---------------|------|
+| `b_questions_extracted.json` | Main data: stems, options, flags, optional inferred answers |
+| `question_image_map.json` | `by_question_id` → ordered Flutter asset paths for PNGs (easiest lookup) |
+| `question_images/*.png` | Images tied to question `id` in filenames |
+| `b_questions_extracted.md`, `summary.txt` | Human / stats review |
 
-- **`id`**: Stable unique key, e.g. `q005_occ001` (`q` + display number + `_occ` + occurrence). **Use this as the primary key.**
-- **`display_number` / `occurrence`**: The same “display” number can appear more than once; **`id` is unique.**
-- **`question`**: Stem text.
-- **`options[]`**: `key` (`a`, `b`, …), `text`, plus `font_bold_ratio` / `visual_darkness` (for QA of extraction only).
-- **`correct_option`**: Option key when detection ran, e.g. `"b"`. **May be absent** for many rows.
-- **`correct_option_method`**: `font_bold` or `visual_darkness` when `correct_option` is set.
-- **`correct_option_confidence`**: 0–1 when present.
-- **`has_image`**: Boolean.
-- **`image_files`**: List of paths from the machine that ran extraction — often **absolute paths**. **Do not use paths as-is in the app.**
+All relevant paths must stay listed under **`pubspec.yaml`** → `flutter: assets:`.
 
-## Mapping question → image (for an AI or engineer)
+---
 
-**Already linked in data:** each question row in `b_questions_extracted.json` carries **`has_image`** and **`image_files`** for that question only — no separate join table is required.
+## Coverage (important)
 
-**Easiest path for tooling:** open **`question_image_map.json`** and look up **`by_question_id["q005_occ001"]`** → ordered list of asset paths ready for `Image.asset(...)` / `rootBundle`.
+| | Count |
+|--|--------|
+| Question rows | **900** |
+| With ≥1 image | **360** |
+| Text-only | **540** |
+| Has inferred **`correct_option`** | **493** |
+| No inferred answer | **407** — **do not assume** correct |
 
-From the main JSON only:
+Inferred answers came from PDF bold styling (not an official key). Use confidence fields when you score.
 
-1. Read **`has_image`**. If `false` (and `image_files` empty), the question is **text-only** for this extract.
-2. If `true`, use **`image_files`**: take only the **filename** (e.g. `q005_occ001_img1.png`).
-3. Flutter **asset** path: `assets/b_license_import/question_images/<filename>` (must match `pubspec.yaml` `assets:` entries).
-4. Filenames align with **`id`**: e.g. `q005_occ001` → `q005_occ001_img1.png`, possibly `_img2.png`, etc.
+---
 
-**Regenerating `question_image_map.json`** (if you edit the main JSON): strip any bytes before the first `{` in `b_questions_extracted.json`, parse JSON, then for each question build basename paths under `assets/b_license_import/question_images/` from `image_files`.
+## IDs and images
 
-## Mapping question → answer
+- **Primary key:** `id` (e.g. `q005_occ001`). **`display_number`** can repeat; **`id`** does not.
+- **Has image?** Use **`question_image_map.json`** → if `by_question_id[id]` is missing, **no images** for that row.
+- **Or** from JSON: `has_image` + **`image_files`** → use **basename only** → `assets/b_license_import/question_images/<basename>`.
+- **`image_files`** may contain old absolute paths from another PC — **ignore directory; basename only.**
 
-1. If **`correct_option`** is present, treat it as the **model’s best guess** from PDF bold styling; check **`correct_option_confidence`** and **`correct_option_method`**.
-2. If **`correct_option`** is **missing**, the extract **does not** provide an answer — the app should not score those as “known correct” until curated or re-processed.
+---
 
-## One-line integration rules (duplicate of sections above)
+## Answers
 
-- Primary key: question **`id`**. Load stems/options from **`b_questions_extracted.json`** (parse JSON; if needed, skip any garbage before the first `{`).
-- Images: prefer **`question_image_map.json`** → `by_question_id[id]`; absent key ⇒ no images.
-- Answers: use **`correct_option`** only when present; many rows have no inferred answer.
+- If **`correct_option`** is set → best-effort guess; check **`correct_option_confidence`** / **`correct_option_method`**.
+- If missing → treat as **unknown** until curated.
 
-## Re-generating paths
+---
 
-If `image_files` still contain old absolute prefixes from another machine, **only the filename** matters for the app; paths in JSON are not authoritative for runtime.
+## How to integrate (same idea as taxi)
+
+Taxi today: **`assets/taxi/bank/questions.json`** + **`TaxiQuestionBank`** (`rootBundle.loadString`) + optional **`TaxiBankImage`** / Storage URLs in JSON.
+
+For B-license, unless you redesign on purpose:
+
+1. **Keep** this folder layout and filenames (JSON + `question_images/` + map).
+2. **Load JSON** with **`rootBundle.loadString`** (`b_questions_extracted.json`; parse JSON — if parse fails, strip bytes **before the first `{`**).
+3. **Resolve images** from **`question_image_map.json`** or basenames from JSON as above.
+4. **Reuse** taxi-style widgets (**`TaxiBankImage`**, lightbox) where it fits, or add B-specific wrappers.
+5. **Later:** optional Firebase Storage + HTTPS URLs (same pattern as taxi bank scripts) with **`Image.asset`** fallback.
+
+**Avoid:** moving PNGs/JSON without updating **`pubspec.yaml`** and **`question_image_map.json`**; assuming every row has **`correct_option`**; removing this folder from Git without another backup.
+
+---
+
+## Regenerate `question_image_map.json`
+
+After a **new** `b_questions_extracted.json` (e.g. re-export from PDF): parse the JSON (start at first `{`), for each question with non-empty **`image_files`**, map **`id`** → list of `assets/b_license_import/question_images/<basename>` in order.
