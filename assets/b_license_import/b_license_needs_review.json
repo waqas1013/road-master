@@ -9041,9 +9041,7 @@
       "correct_option": null,
       "correct_option_method": null,
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/multi_pdf_import/question_images/driving_test_1_q014_occ014_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": true,

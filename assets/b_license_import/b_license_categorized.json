@@ -2012,9 +2012,7 @@
       "correct_option": "B",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_1_q035_occ035_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -6337,9 +6335,7 @@
       "correct_option": "B",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_1_q057_occ057_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -6375,9 +6371,7 @@
       "correct_option": "B",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_1_q058_occ058_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -11681,9 +11675,7 @@
       "correct_option": "C",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_1_q012_occ012_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -11747,9 +11739,7 @@
       "correct_option": "A",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_1_q017_occ017_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -11813,9 +11803,7 @@
       "correct_option": "A",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_1_q020_occ020_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -12031,9 +12019,7 @@
       "correct_option": "B",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_1_q034_occ034_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -12629,10 +12615,7 @@
       "correct_option": "A",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_2_q032_occ032_img1.png",
-        "assets/b_license_import/question_images/driving_test_2_q032_occ032_img2.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -12702,9 +12685,7 @@
       "correct_option": "B",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_2_q039_occ039_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -12882,9 +12863,7 @@
       "correct_option": "B",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_2_q053_occ053_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -12952,9 +12931,7 @@
       "correct_option": "D",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_2_q059_occ059_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
@@ -13060,9 +13037,7 @@
       "correct_option": "A",
       "correct_option_method": "end_answer_key",
       "has_image": true,
-      "image_files": [
-        "assets/b_license_import/question_images/driving_test_2_q070_occ070_img1.png"
-      ],
+      "image_files": [],
       "warning": null,
       "source_file": "multi_pdf_import.json",
       "needs_review": false,
