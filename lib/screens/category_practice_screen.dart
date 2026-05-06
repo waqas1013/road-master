@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
+import '../services/b_license_repository.dart';
 
 class PracticeSetModel {
   final String title;
@@ -37,67 +38,61 @@ class _CategoryPracticeScreenState extends State<CategoryPracticeScreen> {
   late final int _overallProgress;
   late final IconData _categoryIcon;
 
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    // Generate mock data relevant to the chosen category
-    _setupMockData();
+    _loadData();
   }
 
-  void _setupMockData() {
+  Future<void> _loadData() async {
+    await BLicenseRepository.instance.load();
+    
+    if (!mounted) return;
+
+    final repo = BLicenseRepository.instance;
+    final totalQs = repo.getTotalQuestions(widget.categoryTitle);
+    final numSets = repo.getSetCount(widget.categoryTitle);
+
     if (widget.categoryTitle == 'Traffic Rules') {
       _studyTip = 'Focus on the differences between give-way and stop rules. Pay attention to who has the right of way in unmarked intersections.';
-      _overallProgress = 45;
       _categoryIcon = Icons.traffic_rounded;
-      _sets = [
-        PracticeSetModel(title: 'Priority & Right-of-way', state: 'completed', scorePercent: 92, progress: 50, total: 50),
-        PracticeSetModel(title: 'Speed Limits & Positioning', state: 'current', progress: 20, total: 50),
-        PracticeSetModel(title: 'Overtaking Rules', state: 'not_started', total: 40),
-      ];
     } else if (widget.categoryTitle == 'Signs & Signals') {
       _studyTip = 'Focus on the subtle differences between warning signs and prohibition signs. Pay attention to colors and shapes.';
-      _overallProgress = 33;
-      _categoryIcon = Icons.traffic_rounded; // Or signpost
-      _sets = [
-        PracticeSetModel(title: 'Warning & Priority Signs', state: 'completed', scorePercent: 95, progress: 60, total: 60),
-        PracticeSetModel(title: 'Prohibition & Mandatory', state: 'current', progress: 40, total: 75),
-        PracticeSetModel(title: 'Information & Direction', state: 'not_started', total: 75),
-        PracticeSetModel(title: 'Traffic Signals & Markings', state: 'not_started', total: 50),
-      ];
+      _categoryIcon = Icons.traffic_rounded;
     } else if (widget.categoryTitle == 'Safety & Pedestrians') {
       _studyTip = 'Always anticipate the unexpected. Vulnerable road users like children and cyclists can act unpredictably.';
-      _overallProgress = 20;
       _categoryIcon = Icons.pedal_bike_rounded;
-      _sets = [
-        PracticeSetModel(title: 'Vulnerable Road Users', state: 'current', progress: 12, total: 60),
-        PracticeSetModel(title: 'Defensive Driving Strategies', state: 'not_started', total: 50),
-      ];
     } else if (widget.categoryTitle == 'The Human Factor') {
       _studyTip = 'Remember that tiredness affects reaction time just as much as low levels of alcohol.';
-      _overallProgress = 10;
       _categoryIcon = Icons.psychology_rounded;
-      _sets = [
-        PracticeSetModel(title: 'Tiredness & Distractions', state: 'current', progress: 4, total: 40),
-        PracticeSetModel(title: 'Alcohol & Drugs', state: 'not_started', total: 30),
-      ];
     } else if (widget.categoryTitle == 'Environment & Tech') {
       _studyTip = 'Eco-driving saves fuel and the environment. Keep a steady speed and engine brake when possible.';
-      _overallProgress = 50;
       _categoryIcon = Icons.eco_rounded;
-      _sets = [
-        PracticeSetModel(title: 'Eco-driving Principles', state: 'completed', scorePercent: 88, progress: 30, total: 30),
-        PracticeSetModel(title: 'Vehicle Technologies', state: 'current', progress: 10, total: 20),
-      ];
     } else {
-      // Default / Vehicle & Documents
       _studyTip = 'Make sure you know the difference between registration certificate part 1 and part 2.';
-      _overallProgress = 0;
       _categoryIcon = Icons.description_rounded;
-      _sets = [
-        PracticeSetModel(title: 'Registration & Inspection', state: 'not_started', total: 15),
-        PracticeSetModel(title: 'Insurance & Liability', state: 'not_started', total: 15),
-      ];
     }
+
+    _overallProgress = 0; // Later can be wired up to actual saved user progress
+
+    final List<PracticeSetModel> generatedSets = [];
+    for (var i = 1; i <= numSets; i++) {
+      final qs = repo.getQuestionsForSet(widget.categoryTitle, i);
+      generatedSets.add(
+        PracticeSetModel(
+          title: 'Practice Questions (Set $i)', 
+          state: 'not_started', // Currently we mock the state as not_started for all dynamically loaded sets until progress tracking is added
+          total: qs.length,
+        )
+      );
+    }
+    _sets = generatedSets;
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -125,7 +120,9 @@ class _CategoryPracticeScreenState extends State<CategoryPracticeScreen> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: _isLoading 
+        ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+        : SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,7 +364,7 @@ class _CategoryPracticeScreenState extends State<CategoryPracticeScreen> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () {},
+                onPressed: () { context.push('/b-license-question?title=${Uri.encodeComponent(widget.categoryTitle)}&set=$setNumber'); },
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: const BorderSide(color: Color(0xFF0F7A6A)),
@@ -493,7 +490,9 @@ class _CategoryPracticeScreenState extends State<CategoryPracticeScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.push('/b-license-question?title=${Uri.encodeComponent(widget.categoryTitle)}&set=$setNumber');
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
@@ -581,7 +580,7 @@ class _CategoryPracticeScreenState extends State<CategoryPracticeScreen> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () {},
+                onPressed: () { context.push('/b-license-question?title=${Uri.encodeComponent(widget.categoryTitle)}&set=$setNumber'); },
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: BorderSide(color: Colors.grey.shade400),

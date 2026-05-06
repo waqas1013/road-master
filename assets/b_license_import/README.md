@@ -76,3 +76,17 @@ For B-license, unless you redesign on purpose:
 ## Regenerate `question_image_map.json`
 
 After a **new** `b_questions_extracted.json` (e.g. re-export from PDF): parse the JSON (start at first `{`), for each question with non-empty **`image_files`**, map **`id`** → list of `assets/b_license_import/question_images/<basename>` in order.
+
+---
+
+## Multi-PDF batch import (`multi_pdf_import/`)
+
+Use this when extracting from many source PDFs (Korkortonline result exports + exam packs):
+
+- `multi_pdf_import/questions_extracted.json`: combined normalized dataset.
+- `multi_pdf_import/question_image_map.json`: `id` -> ordered image asset paths.
+- `multi_pdf_import/question_images/*.png`: extracted question illustrations.
+- `multi_pdf_import/questions_extracted.md`: human review snapshot.
+- `multi_pdf_import/summary.txt`: totals, per-PDF counts, and parser warnings.
+
+If you rerun extraction, treat `summary.txt` as the first QA checkpoint (missing answers, skipped/odd questions, low-count PDFs).

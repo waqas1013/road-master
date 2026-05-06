@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
+import '../services/b_license_repository.dart';
 
 class StudyScreen extends StatefulWidget {
   const StudyScreen({super.key});
@@ -12,6 +13,22 @@ class StudyScreen extends StatefulWidget {
 
 class _StudyScreenState extends State<StudyScreen> {
   int _currentIndex = 1; // Practice tab is selected
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRepo();
+  }
+
+  Future<void> _loadRepo() async {
+    await BLicenseRepository.instance.load();
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +82,9 @@ class _StudyScreenState extends State<StudyScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      body: _isLoading 
+        ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+        : SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,8 +113,8 @@ class _StudyScreenState extends State<StudyScreen> {
               iconBg: Colors.blue.shade50,
               title: 'Traffic Rules',
               subtitle: 'Priority rules, right-of-way, speed limits, and positioning.',
-              completed: 45,
-              total: 120,
+              completed: 0,
+              total: BLicenseRepository.instance.getTotalQuestions('Traffic Rules'),
             ),
             const SizedBox(height: 16),
             _buildCategoryCard(
@@ -104,8 +123,8 @@ class _StudyScreenState extends State<StudyScreen> {
               iconBg: Colors.green.shade50,
               title: 'Signs & Signals',
               subtitle: 'Road signs, road markings, and traffic light interpretations.',
-              completed: 80,
-              total: 100,
+              completed: 0,
+              total: BLicenseRepository.instance.getTotalQuestions('Signs & Signals'),
             ),
             const SizedBox(height: 16),
             _buildCategoryCard(
@@ -114,8 +133,8 @@ class _StudyScreenState extends State<StudyScreen> {
               iconBg: Colors.orange.shade50,
               title: 'Safety & Pedestrians',
               subtitle: 'Vulnerable road users, defensive driving, and risk awareness.',
-              completed: 20,
-              total: 60,
+              completed: 0,
+              total: BLicenseRepository.instance.getTotalQuestions('Safety & Pedestrians'),
             ),
             const SizedBox(height: 16),
             _buildCategoryCard(
@@ -124,8 +143,8 @@ class _StudyScreenState extends State<StudyScreen> {
               iconBg: Colors.purple.shade50,
               title: 'The Human Factor',
               subtitle: 'Tiredness, alcohol, drugs, peer pressure, and driver psychology.',
-              completed: 10,
-              total: 40,
+              completed: 0,
+              total: BLicenseRepository.instance.getTotalQuestions('The Human Factor'),
             ),
             const SizedBox(height: 16),
             _buildCategoryCard(
@@ -134,8 +153,8 @@ class _StudyScreenState extends State<StudyScreen> {
               iconBg: Colors.teal.shade50,
               title: 'Environment & Tech',
               subtitle: 'Eco-driving, emissions, fuel types, and active safety systems.',
-              completed: 50,
-              total: 50,
+              completed: 0,
+              total: BLicenseRepository.instance.getTotalQuestions('Environment & Tech'),
             ),
             const SizedBox(height: 16),
             _buildCategoryCard(
@@ -145,7 +164,7 @@ class _StudyScreenState extends State<StudyScreen> {
               title: 'Vehicle & Documents',
               subtitle: 'Registration, inspection, insurance, and vehicle parts.',
               completed: 0,
-              total: 30,
+              total: BLicenseRepository.instance.getTotalQuestions('Vehicle & Documents'),
             ),
             const SizedBox(height: 32),
           ],

@@ -11,6 +11,8 @@ import '../screens/dashboard_screen.dart';
 import '../screens/study_screen.dart';
 import '../screens/stats_screen.dart';
 import '../screens/category_practice_screen.dart';
+import '../screens/b_license_question_screen.dart';
+import '../screens/b_license_results_screen.dart';
 import '../screens/taxi_dashboard_screen.dart';
 import '../screens/taxi_karta_screen.dart';
 import '../screens/taxi_lagstiftning_screen.dart';
@@ -161,6 +163,32 @@ class AppRouter {
         builder: (context, state) {
           final title = state.uri.queryParameters['title'] ?? 'Category';
           return CategoryPracticeScreen(categoryTitle: title);
+        },
+      ),
+      GoRoute(
+        path: '/b-license-question',
+        builder: (context, state) {
+          final title = state.uri.queryParameters['title'] ?? 'Category';
+          final setNumStr = state.uri.queryParameters['set'] ?? '1';
+          return BLicenseQuestionScreen(
+            categoryTitle: title,
+            setNumber: int.tryParse(setNumStr) ?? 1,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/b-license-results',
+        builder: (context, state) {
+          final title = state.uri.queryParameters['title'] ?? 'Category';
+          final setNumStr = state.uri.queryParameters['set'] ?? '1';
+          final correctStr = state.uri.queryParameters['correct'] ?? '0';
+          final totalStr = state.uri.queryParameters['total'] ?? '50';
+          return BLicenseResultsScreen(
+            categoryTitle: title,
+            setNumber: int.tryParse(setNumStr) ?? 1,
+            correctCount: int.tryParse(correctStr) ?? 0,
+            totalCount: int.tryParse(totalStr) ?? 50,
+          );
         },
       ),
       // Taxi License routes
