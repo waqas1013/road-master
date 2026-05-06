@@ -10,6 +10,7 @@ import '../screens/category_selection_screen.dart';
 import '../screens/dashboard_screen.dart';
 import '../screens/study_screen.dart';
 import '../screens/stats_screen.dart';
+import '../screens/category_practice_screen.dart';
 import '../screens/taxi_dashboard_screen.dart';
 import '../screens/taxi_karta_screen.dart';
 import '../screens/taxi_lagstiftning_screen.dart';
@@ -154,6 +155,13 @@ class AppRouter {
       GoRoute(
         path: '/stats',
         builder: (context, state) => const StatsScreen(),
+      ),
+      GoRoute(
+        path: '/category-practice',
+        builder: (context, state) {
+          final title = state.uri.queryParameters['title'] ?? 'Category';
+          return CategoryPracticeScreen(categoryTitle: title);
+        },
       ),
       // Taxi License routes
       GoRoute(
