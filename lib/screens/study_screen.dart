@@ -11,27 +11,57 @@ class StudyScreen extends StatefulWidget {
 }
 
 class _StudyScreenState extends State<StudyScreen> {
-  int _currentIndex = 1; // Study tab is selected
+  int _currentIndex = 1; // Practice tab is selected
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.menu_rounded, color: AppColors.primary),
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Menu coming soon!')),
+            );
+          },
+        ),
         title: Text(
-          'Study & Practice',
+          'Swedish Theory',
           style: GoogleFonts.publicSans(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: AppColors.onBackground,
+            color: AppColors.primary,
           ),
         ),
-        centerTitle: false,
+        centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.search_rounded, size: 24),
-            onPressed: () {},
+          GestureDetector(
+            onTap: () => context.push('/category-selection'),
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.directions_car_rounded, size: 14, color: AppColors.primary),
+                  const SizedBox(width: 4),
+                  Text(
+                    'B',
+                    style: GoogleFonts.publicSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -40,143 +70,88 @@ class _StudyScreenState extends State<StudyScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
+            const SizedBox(height: 16),
             Text(
-              'Master the theory with organized materials and tests.',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                color: AppColors.onSurfaceVariant,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 24),
-            // Quick action buttons
-            Row(
-              children: [
-                Expanded(
-                  child: _buildQuickAction(
-                    icon: Icons.play_arrow_rounded,
-                    label: 'Övningsprov',
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildQuickAction(
-                    icon: Icons.bookmark_outline_rounded,
-                    label: 'Sparade',
-                    color: AppColors.secondary,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildQuickAction(
-                    icon: Icons.history_rounded,
-                    label: 'Historik',
-                    color: AppColors.tertiary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 28),
-            // Categories section
-            Text(
-              'Categories',
+              'Study Categories',
               style: GoogleFonts.publicSans(
-                fontSize: 18,
+                fontSize: 24,
                 fontWeight: FontWeight.w700,
                 color: AppColors.onBackground,
               ),
             ),
-            const SizedBox(height: 16),
-            _buildCategoryCard(
-              icon: Icons.gavel_rounded,
-              iconColor: Colors.blue.shade700,
-              iconBg: Colors.blue.shade50,
-              title: 'Rules of the Road',
-              chapters: 12,
-              questions: 340,
-              progress: 0.65,
-            ),
-            const SizedBox(height: 12),
-            _buildCategoryCard(
-              icon: Icons.build_rounded,
-              iconColor: Colors.teal.shade700,
-              iconBg: Colors.teal.shade50,
-              title: 'Vehicle Knowledge',
-              chapters: 8,
-              questions: 210,
-              progress: 0.42,
-            ),
-            const SizedBox(height: 12),
-            _buildCategoryCard(
-              icon: Icons.eco_rounded,
-              iconColor: Colors.green.shade700,
-              iconBg: Colors.green.shade50,
-              title: 'Environment',
-              chapters: 6,
-              questions: 180,
-              progress: 0.78,
-            ),
-            const SizedBox(height: 12),
-            _buildCategoryCard(
-              icon: Icons.health_and_safety_rounded,
-              iconColor: Colors.red.shade700,
-              iconBg: Colors.red.shade50,
-              title: 'Traffic Safety',
-              chapters: 10,
-              questions: 290,
-              progress: 0.30,
+            const SizedBox(height: 8),
+            Text(
+              'Master the core topics for the Swedish Theory Test.',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: AppColors.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 24),
+            _buildCategoryCard(
+              icon: Icons.traffic_rounded,
+              iconColor: Colors.blue.shade700,
+              iconBg: Colors.blue.shade50,
+              title: 'Traffic Rules',
+              subtitle: 'Priority rules, right-of-way, speed limits, and positioning.',
+              completed: 45,
+              total: 120,
+            ),
+            const SizedBox(height: 16),
+            _buildCategoryCard(
+              icon: Icons.signpost_rounded,
+              iconColor: Colors.green.shade700,
+              iconBg: Colors.green.shade50,
+              title: 'Signs & Signals',
+              subtitle: 'Road signs, road markings, and traffic light interpretations.',
+              completed: 80,
+              total: 100,
+            ),
+            const SizedBox(height: 16),
+            _buildCategoryCard(
+              icon: Icons.pedal_bike_rounded,
+              iconColor: Colors.orange.shade700,
+              iconBg: Colors.orange.shade50,
+              title: 'Safety & Pedestrians',
+              subtitle: 'Vulnerable road users, defensive driving, and risk awareness.',
+              completed: 20,
+              total: 60,
+            ),
+            const SizedBox(height: 16),
+            _buildCategoryCard(
+              icon: Icons.psychology_rounded,
+              iconColor: Colors.purple.shade700,
+              iconBg: Colors.purple.shade50,
+              title: 'The Human Factor',
+              subtitle: 'Tiredness, alcohol, drugs, peer pressure, and driver psychology.',
+              completed: 10,
+              total: 40,
+            ),
+            const SizedBox(height: 16),
+            _buildCategoryCard(
+              icon: Icons.eco_rounded,
+              iconColor: Colors.teal.shade700,
+              iconBg: Colors.teal.shade50,
+              title: 'Environment & Tech',
+              subtitle: 'Eco-driving, emissions, fuel types, and active safety systems.',
+              completed: 50,
+              total: 50,
+            ),
+            const SizedBox(height: 16),
+            _buildCategoryCard(
+              icon: Icons.description_rounded,
+              iconColor: Colors.red.shade700,
+              iconBg: Colors.red.shade50,
+              title: 'Vehicle & Documents',
+              subtitle: 'Registration, inspection, insurance, and vehicle parts.',
+              completed: 0,
+              total: 30,
+            ),
+            const SizedBox(height: 32),
           ],
         ),
       ),
       bottomNavigationBar: _buildBottomNav(context),
-    );
-  }
-
-  Widget _buildQuickAction({
-    required IconData icon,
-    required String label,
-    required Color color,
-  }) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: () {},
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.outlineVariant, width: 0.5),
-          ),
-          child: Column(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: color, size: 22),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                style: GoogleFonts.publicSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.onBackground,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -185,92 +160,80 @@ class _StudyScreenState extends State<StudyScreen> {
     required Color iconColor,
     required Color iconBg,
     required String title,
-    required int chapters,
-    required int questions,
-    required double progress,
+    required String subtitle,
+    required int completed,
+    required int total,
   }) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: () {},
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.outlineVariant, width: 0.5),
-          ),
-          child: Column(
+    double progress = total > 0 ? completed / total : 0.0;
+    
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: iconBg,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(icon, color: iconColor, size: 24),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: GoogleFonts.publicSans(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.onBackground,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '$chapters Chapters  •  $questions Questions',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: AppColors.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(Icons.chevron_right_rounded, color: AppColors.onSurfaceVariant),
-                ],
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: iconColor, size: 22),
               ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        backgroundColor: AppColors.surfaceContainerHigh,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          progress > 0.7 ? AppColors.success : AppColors.primary,
-                        ),
-                        minHeight: 6,
-                      ),
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '$completed/$total',
+                  style: GoogleFonts.publicSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: iconColor,
                   ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '${(progress * 100).toInt()}%',
-                    style: GoogleFonts.publicSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: progress > 0.7 ? AppColors.success : AppColors.primary,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: GoogleFonts.publicSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.onBackground,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              color: AppColors.onSurfaceVariant,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: iconBg.withValues(alpha: 0.5),
+              valueColor: AlwaysStoppedAnimation<Color>(iconColor),
+              minHeight: 6,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -289,14 +252,13 @@ class _StudyScreenState extends State<StudyScreen> {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.dashboard_rounded, 'Dashboard', 0),
-              _buildNavItem(Icons.menu_book_rounded, 'Study', 1),
-              _buildNavItem(Icons.quiz_rounded, 'Practice', 2),
-              _buildNavItem(Icons.insights_rounded, 'Stats', 3),
+              _buildNavItem(Icons.home_rounded, 'Home', 0),
+              _buildNavItem(Icons.menu_book_rounded, 'Practice', 1),
+              _buildNavItem(Icons.insights_rounded, 'Stats', 2),
             ],
           ),
         ),
@@ -310,14 +272,15 @@ class _StudyScreenState extends State<StudyScreen> {
       onTap: () {
         setState(() => _currentIndex = index);
         if (index == 0) context.go('/dashboard');
-        if (index == 3) context.go('/stats');
+        if (index == 1) context.go('/study');
+        if (index == 2) context.go('/stats');
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: isSelected
             ? BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
               )
             : null,
         child: Column(
@@ -325,14 +288,14 @@ class _StudyScreenState extends State<StudyScreen> {
           children: [
             Icon(
               icon,
-              size: 24,
+              size: 20,
               color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: GoogleFonts.publicSans(
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
               ),

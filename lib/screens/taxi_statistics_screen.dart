@@ -262,29 +262,6 @@ class TaxiStatisticsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.manage_search_rounded,
-                      size: 28,
-                      color: AppColors.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Min Statistik',
-                        style: GoogleFonts.publicSans(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.4,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
                 if (!loggedIn) ...[
                   const SizedBox(height: 12),
                   InkWell(
@@ -399,29 +376,35 @@ class _OverallCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+      padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.surfaceVariant),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
           SizedBox(
-            width: 132,
-            height: 132,
+            width: 140,
+            height: 140,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 SizedBox(
-                  width: 132,
-                  height: 132,
+                  width: 140,
+                  height: 140,
                   child: CircularProgressIndicator(
                     value: (overallPercent / 100).clamp(0.0, 1.0),
-                    strokeWidth: 10,
-                    backgroundColor: AppColors.surfaceContainerHigh,
+                    strokeWidth: 14,
+                    backgroundColor: AppColors.surfaceContainerHigh.withValues(alpha: 0.5),
                     valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppColors.primaryContainer,
+                      AppColors.primary,
                     ),
                     strokeCap: StrokeCap.round,
                   ),
@@ -432,16 +415,17 @@ class _OverallCard extends StatelessWidget {
                     Text(
                       '$overallPercent%',
                       style: GoogleFonts.publicSans(
-                        fontSize: 40 / 2,
+                        fontSize: 32,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.primaryContainer,
+                        color: AppColors.primary,
                       ),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       'TOTALT',
                       style: GoogleFonts.publicSans(
-                        fontSize: 14 / 2,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1.2,
                         color: AppColors.onSurfaceVariant,
                       ),
@@ -451,22 +435,22 @@ class _OverallCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 32),
           Text(
             'Övergripande framsteg',
             style: GoogleFonts.publicSans(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.onSurface,
+              color: AppColors.onBackground,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
-            'Du är på god väg mot din taxilegitimation. Fortsätt öva på de områden där du behöver mer träning för att nå 100%.',
+            'Du är på god väg mot din\ntaxilegitimation. Fortsätt öva på de\nområden där du behöver mer träning\nför att nå 100%.',
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
-              fontSize: 16,
-              height: 1.35,
+              fontSize: 14,
+              height: 1.5,
               color: AppColors.onSurfaceVariant,
             ),
           ),
@@ -500,16 +484,17 @@ class _CategoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.surfaceVariant),
+        border: Border.all(color: barColor.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 width: 34,
@@ -520,34 +505,33 @@ class _CategoryTile extends StatelessWidget {
                 ),
                 child: Icon(icon, size: 18, color: iconColor),
               ),
-              const Spacer(),
               Text(
                 '$pct%',
                 style: GoogleFonts.publicSans(
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.onSurfaceVariant,
+                  color: barColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Text(
             title,
             style: GoogleFonts.publicSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
               height: 1.2,
-              color: AppColors.onSurface,
+              color: AppColors.onBackground,
             ),
           ),
           const Spacer(),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(2),
             child: LinearProgressIndicator(
               value: (pct / 100).clamp(0.0, 1.0),
               minHeight: 4,
-              backgroundColor: AppColors.surfaceContainerHigh,
+              backgroundColor: iconBg.withValues(alpha: 0.5),
               valueColor: AlwaysStoppedAnimation<Color>(barColor),
             ),
           ),
@@ -555,7 +539,7 @@ class _CategoryTile extends StatelessWidget {
           Text(
             notStarted ? 'Ej påbörjat' : 'Senaste: $latest%',
             style: GoogleFonts.inter(
-              fontSize: 12,
+              fontSize: 10,
               color: AppColors.onSurfaceVariant,
             ),
           ),
@@ -577,9 +561,9 @@ class _HistoryCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.surfaceVariant),
+          border: Border.all(color: Colors.grey.shade200),
         ),
         child: Text(
           'Inga avslutade slutprov ännu.',
@@ -594,81 +578,95 @@ class _HistoryCard extends StatelessWidget {
     final top = history.take(3).toList();
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.surfaceVariant),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         children: List.generate(top.length, (i) {
           final e = top[i];
           final n = history.length - i;
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-            child: Row(
-              children: [
-                Container(
-                  width: 26,
-                  height: 26,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: (e.passed ? AppColors.success : AppColors.error)
-                        .withValues(alpha: 0.12),
-                  ),
-                  child: Icon(
-                    e.passed ? Icons.check_rounded : Icons.close_rounded,
-                    size: 16,
-                    color: e.passed ? AppColors.success : AppColors.error,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        TaxiStatisticsScreen._svDate(e.completedAt),
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.onSurface,
-                        ),
-                      ),
-                      Text(
-                        'Slutprov #$n',
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Row(
                   children: [
-                    Text(
-                      '${e.scorePercent}%',
-                      style: GoogleFonts.publicSans(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.onSurface,
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: (e.passed ? Colors.green.shade50 : Colors.red.shade50),
+                      ),
+                      child: Icon(
+                        e.passed ? Icons.check_circle_outline_rounded : Icons.highlight_off_rounded,
+                        size: 20,
+                        color: e.passed ? Colors.green.shade600 : Colors.red.shade600,
                       ),
                     ),
-                    Text(
-                      e.passed ? 'GODKÄND' : 'UNDERKÄND',
-                      style: GoogleFonts.publicSans(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.6,
-                        color: e.passed ? AppColors.success : AppColors.error,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            TaxiStatisticsScreen._svDate(e.completedAt),
+                            style: GoogleFonts.publicSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.onBackground,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Slutprov #$n',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: AppColors.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '${e.scorePercent}%',
+                              style: GoogleFonts.publicSans(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(Icons.chevron_right_rounded, color: AppColors.outlineVariant, size: 16),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 24),
+                          child: Text(
+                            e.passed ? 'GODKÄND' : 'UNDERKÄND',
+                            style: GoogleFonts.publicSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: e.passed ? Colors.green.shade600 : Colors.red.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              if (i < top.length - 1)
+                Divider(height: 1, thickness: 1, color: Colors.grey.shade200, indent: 0, endIndent: 0),
+            ],
           );
         }),
       ),
